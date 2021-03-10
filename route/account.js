@@ -7,11 +7,13 @@
 
 module.exports = {
     getLogin,
-    login
+    login,
+    logout
 }
 
 var jade = require('jade'); 
 var usecase = require('../core/usecase/account.js');
+var path = require('../config/path.js');
 
 function getLogin(req, res, next) {
     res.render('login');
@@ -24,9 +26,15 @@ function login(req, res, next) {
     }
 
     usecase.login(data, function(result) {
-        if (result.exitcode == 1) {
+        if (result.exitcode != 0) {
             return res.render('login', {error: result});
         }
-        res.render('login', {success: result})
+        res.cookie('x-access-token', result.token)
+        res.redirect(path[result.role]);
     })
+}
+
+function logout(req, res, next) {
+    res.clearCookie('x-access-token');
+    res.redirect('/');
 }

@@ -9,15 +9,21 @@ module.exports = {
     login
 }
 
+var config = require('../../config'), 
+    JWT = require('../../lib/JWT.js');
+var dataprovider = require('../../dataprovider/account.js');
+
 function login(data, cb) {
-    let exitcode, message;
-    if (data.username == 'admin' && data.password == 'admin') {
-        exitcode = 0;
-        message = '';
-    }
-    else {
-        exitcode = 1;
-        message = 'The user does not exist.';
-    }
-    return cb({exitcode, message});
+    dataprovider.login(data, function(err, result) {
+        if (err) {
+            return cb({exitcode: 1, role: null, token: {}, message: err});
+        }
+
+        if (result) {
+            return cb({exitcode: 0, role: result.role.title, token: JWT.Encode(result.toJSON(), config.security.expTime.normal), message: ''});
+        }
+        else {
+            return cb({exitcode: 101, role: null, user: {}, message: 'The user does not exist.'})
+        }
+    })
 }

@@ -9,9 +9,20 @@ module.exports = {
     assignRoutes
 }
 
-var account = require('./account.js');
+var account = require('./account.js'),
+    admin = require('./admin.js');
 
 function assignRoutes(app) {
     app.get('/account/login', account.getLogin);
-    app.post('/account/login', account.login)
+    app.post('/account/login', account.login);
+    app.get('/account/logout', account.logout);
+
+    app.get('/admin', admin.getHome);
+    app.get('/admin/account', admin.getAllAccounts);
+    app.get('/admin/add/account', admin.getAddAccount);
+    app.post('/admin/add/account', admin.addAccount);
+    app.get('/admin/delete/account/:accountId', admin.deleteAccount);
+    app.get('/admin/update/account/:accountId', admin.getUpdateAccount);
+    app.put('/admin/update/account/:accountId', admin.updateAccount);
+
 }
