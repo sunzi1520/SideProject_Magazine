@@ -26,7 +26,7 @@ function getAllAccounts(data, cb) {
               '_id': 1,
               'username': 1,
               'role': '$role.title',
-              'name': {'$concat': ['$information.firstname', ' ', '$information.middlename', ' ', '$information.lastname']}
+              'name': { '$concat': ['$information.firstname', ' ', '$information.middlename', ' ', '$information.lastname']}
           }}
       ], 
         cb);
