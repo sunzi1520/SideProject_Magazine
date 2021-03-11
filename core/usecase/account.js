@@ -20,7 +20,7 @@ function login(data, cb) {
         }
 
         if (result) {
-            return cb({exitcode: 0, role: result.role.title, token: JWT.Encode(result.toJSON(), config.security.expTime.normal), message: ''});
+            return cb({exitcode: 0, role: result.role, token: JWT.Encode(result.toJSON(), config.security.expTime.normal), message: ''});
         }
         else {
             return cb({exitcode: 101, role: null, user: {}, message: 'The user does not exist.'})

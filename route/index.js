@@ -23,6 +23,5 @@ function assignRoutes(app) {
     app.post('/admin/add/account', admin.addAccount);
     app.get('/admin/delete/account/:accountId', admin.deleteAccount);
     app.get('/admin/update/account/:accountId', admin.getUpdateAccount);
-    app.put('/admin/update/account/:accountId', admin.updateAccount);
 
 }

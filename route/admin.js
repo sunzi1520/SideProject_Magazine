@@ -79,12 +79,12 @@ function deleteAccount(req, res, next) {
     var data = {
         '_id': req.params.accountId
     }
+    if (data._id == req.payload._id) {
+        return res.status(200).redirect('/admin/account')
+    }
     usecase.deleteAccount(data, function(result) {
         if (result.exitcode != 0) {
             return res.status(500).redirect('/admin/account');
-        }
-        if (data._id === req.payload._id) {
-            return res.status(200).redirect('/account/logout');
         }
         res.status(200).redirect('/admin/account');
     })

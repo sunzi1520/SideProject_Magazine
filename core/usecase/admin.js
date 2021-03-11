@@ -4,8 +4,7 @@ module.exports = {
     getAllAccounts,
     deleteAccount,
     addAccount,
-    getAccountDetails,
-    updateAccount
+    getAccountDetails
 }
 
 var dataprovider = require('../../dataprovider/admin.js');
