@@ -131,7 +131,7 @@ async function getAccount(req, res, next) {
         //Output
         res.status(200).send({
             exitcode: 0,
-            accounts: serviceLocator.accountSerializer.serialize(account),
+            account: serviceLocator.accountSerializer.serialize(account),
             message: ''
         });
     }
@@ -139,7 +139,7 @@ async function getAccount(req, res, next) {
         console.log('GetAccount from AccountController: Error: ' + err);
         res.status(500).send({
             exitcode: err.code || 500,
-            accounts: [],
+            account: {},
             message: err.message || err || 'Unknown'
         })
     }
