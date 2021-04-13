@@ -6,7 +6,7 @@ const express = require('express'),
 const AccountController = require('../controllers/AccountController');
 
 router.get('/', AccountController.listAccounts);
-router.get('/', AccountController.getSelf);
+router.get('/me', AccountController.getSelf);
 router.get('/:id', AccountController.getAccount);
 router.post('/', AccountController.createAccount);
 router.delete('/:id', AccountController.deleteAccount);
