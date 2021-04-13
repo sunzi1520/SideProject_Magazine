@@ -172,4 +172,32 @@ async function listAccounts(req, res, next) {
     }
 }
 
-module.exports = { createFirstAdmin, listAccounts, createAccount, deleteAccount, getAccount, updateAccount }
+async function getSelf(req, res, next) {
+    try {
+        //Context
+        const serviceLocator = req.server.app.serviceLocator;
+
+        //Input
+        const {id} = req.payload;
+        
+        //Process
+        const account = await GetAccount(id, serviceLocator);
+
+        //Output
+        res.status(200).send({
+            exitcode: 0,
+            account: serviceLocator.accountSerializer.serialize(account),
+            message: ''
+        });
+    }
+    catch (err) {
+        console.log('GetAccount from AccountController: Error: ' + err);
+        res.status(500).send({
+            exitcode: err.code || 500,
+            account: {},
+            message: err.message || err || 'Unknown'
+        })
+    }
+}
+
+module.exports = { createFirstAdmin, listAccounts, createAccount, deleteAccount, getAccount, updateAccount, getSelf }
