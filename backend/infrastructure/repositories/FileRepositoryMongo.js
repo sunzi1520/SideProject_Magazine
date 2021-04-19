@@ -34,6 +34,13 @@ module.exports = class extends FileRepository {
         const mongooseFile = await MongooseFile.findOne({filename});
         return new File(mongooseFile.id, mongooseFile.contributionId, mongooseFile.filename, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
     }
+
+    async getByContribution(contributionId) {
+        const mongooseFiles = await MongooseFile.find({contribution: contributionId}).populate({path: 'contribution'}).execPopulate();
+        return mongooseUsers.map((mongooseFile) => {
+            return new File(mongooseFile.id, mongooseFile.contributionId, mongooseFile.filename, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
+        });
+    }
     
     async find() {
         const mongooseUsers = await MongooseFile.find();

@@ -7,6 +7,15 @@
 # Update
 ---
 
+Date: 20 Apr 2021
+1. Changes:
+- It will return `Error403:No token provided` when no token is provided to access authorized resources.
+
+2. Fix bugs:
+- When delete a user, it returns an error with the message: 'Cannot read property `fullname` of undefined' <br/>
+- Cause: Do not change the implementation of `persist` in the account repository followed the new use case, so that, when created, an account document does not have `information` field initially. <br/>
+- Solution: Update the implementation of `persist` in the account repository
+
 Date: 19 Apr 2021
 1. API changes: 
 - Use plural words instead of singular words. E.g. /account -change-> /accounts
@@ -45,7 +54,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 ## Authorization Routes
 
 **POST** /auth<br/>
-**Description**: A user sends his credential to gain access token in order to access the system.
+**Description**: A user sends his credential to gain access token in order to access the system.<br/>
 **Request**
 1. **Header**
 2. **Body**
@@ -60,7 +69,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 ## Account Routes
 
 **POST** /accounts<br/>
-**Description**: A user creates a new account by providing necessary data
+**Description**: A user creates a new account by providing necessary data<br/>
 **Request**
 1. **Header**
 - x-access-token: string
@@ -79,7 +88,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - message: String || Object
 
 **GET** /accounts<br/>
-**Description**: A user view a list of accounts that he is allowed to view
+**Description**: A user view a list of accounts that he is allowed to view<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -91,7 +100,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - message: String || Object
 
 **GET** /accounts/:id<br/>
-**Description**: A user view information of a specific account by a given ID
+**Description**: A user view information of a specific account by a given ID<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -139,7 +148,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - fullname: String
 - dob: DateString
 - gender: String
-- phone: String of numbers
+- phone: String of numbers<br/>
 *(Note: unchanged fields should give their original data instead of a blank)*
 
 **Reponse**
@@ -147,7 +156,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - message: String || Object
 
 **DELETE** /accounts/:id<br/>
-**Description**: A user deletes a specific account by a given ID
+**Description**: A user deletes a specific account by a given ID<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -160,7 +169,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 ## Magazine routes
 
 **POST** /magazines<br/>
-**Description**: A user creates a new magazine by giving necessary data
+**Description**: A user creates a new magazine by giving necessary data<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -176,7 +185,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - message: String || Object
 
 **GET** /magazines<br/>
-**Description**: A user views a list of magazines
+**Description**: A user views a list of magazines<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -188,7 +197,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - message: String || Object
 
 **GET** /magazines/:id<br/>
-**Description**: A user views the details of a specific magazine by a given ID
+**Description**: A user views the details of a specific magazine by a given ID<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -200,7 +209,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - message: String || Object
 
 **DELETE** /magazines/:id<br/>
-**Description**: A user deletes a specific magazine by a given ID
+**Description**: A user deletes a specific magazine by a given ID<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -213,7 +222,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 ## Contribution Routes
 
 **POST** /contributions/<br/>
-**Description**: A student creates a new contribution
+**Description**: A student creates a new contribution<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -231,7 +240,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - message: String || Object
 
 **PUT** /contributions/:id<br/>
-**Description**: A student updates a contribution
+**Description**: A student updates a contribution<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -250,7 +259,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 ## File Routes
 
 **GET** /files/:id<br/>
-**Description**: A user downloads a file by given ID
+**Description**: A user downloads a file by given ID<br/>
 **Request**
 1. **Header**
 - x-access-token: String
@@ -261,7 +270,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 
 
 **DELETE** /files/:id<br/>
-**Description**: A user deletes a specific file by a given ID
+**Description**: A user deletes a specific file by a given ID<br/>
 **Request**
 1. **Header**
 - x-access-token: String

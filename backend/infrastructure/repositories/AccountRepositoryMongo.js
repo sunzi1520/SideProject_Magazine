@@ -8,8 +8,8 @@ const { Mongoose } = require('mongoose');
 module.exports = class extends AccountRepository {
 
   async persist(accountEntity) {
-    const {email, password, role, faculty} = accountEntity;
-    const mongooseAccount = new MongooseAccount({email, password, role, faculty});
+    const {email, password, role, faculty, fullname, gender, dob, phone} = accountEntity;
+    const mongooseAccount = new MongooseAccount({email, password, role, faculty, information:{fullname, gender, dob, phone}});
     await mongooseAccount.save();
     if (!mongooseAccount) return null;
     return new Account(mongooseAccount.id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, mongooseAccount.information.phone, mongooseAccount.createdAt, mongooseAccount.updatedAt);
