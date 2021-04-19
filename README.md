@@ -1,7 +1,7 @@
 # Inital account
 ---
 
-**Username**: admin<br/>
+**Email**: group4.greenwich@gmail.com<br/>
 **Password**: admin
 
 # Update
