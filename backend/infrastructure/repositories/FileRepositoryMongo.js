@@ -11,41 +11,49 @@ module.exports = class extends FileRepository {
         const { filename, path, filetype } = fileEntity;
         const mongooseFile = new MongooseFile({ contribution, filename, path, filetype });
         await mongooseFile.save();
-        return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
+        await mongooseFile.populate('contribution').execPopulate();
+        return new File(mongooseFile.id, mongooseFile.filename, fileEntity.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
       }
     
     async merge(fileEntity) {
         const { id, filename, contributionId, path, uploadedAt, updatedAt } = fileEntity;
         const mongooseFile = await MongooseFile.findByIdAndUpdate(id, { filename, contributionId, path, uploadedAt, updatedAt });
-        return new File(mongooseFile.id, mongooseFile.contributionId, mongooseFile.filename, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
+        await mongooseFile.populate('contribution').execPopulate();
+        return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
     }
     
     
     async remove(fileId) {
-        return MongooseFile.findByIdAndDelete(fileId);  
+        const mongooseFile = await MongooseFile.findByIdAndDelete(fileId);
+        await mongooseFile.populate('contribution').execPopulate();  
+        return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
     }
 
     async get(fileId) {
         const mongooseFile = await MongooseFile.findById(fileId);
-        return new File(mongooseFile.id, mongooseFile.contributionId, mongooseFile.filename, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
+        await mongooseFile.populate('contribution').execPopulate();
+        return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
     }
     
     async getByName(filename) {
         const mongooseFile = await MongooseFile.findOne({filename});
-        return new File(mongooseFile.id, mongooseFile.contributionId, mongooseFile.filename, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
+        await mongooseFile.populate('contribution').execPopulate();
+        return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
     }
 
     async getByContribution(contributionId) {
-        const mongooseFiles = await MongooseFile.find({contribution: contributionId}).populate({path: 'contribution'}).execPopulate();
-        return mongooseUsers.map((mongooseFile) => {
-            return new File(mongooseFile.id, mongooseFile.contributionId, mongooseFile.filename, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
+        const mongooseFiles = await MongooseFile.find({contribution: contributionId}).exec();
+        await mongooseFile.populate('contribution').execPopulate();
+        return mongooseFiles.map((mongooseFile) => {
+            return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
         });
     }
     
     async find() {
-        const mongooseUsers = await MongooseFile.find();
-        return mongooseUsers.map((mongooseFile) => {
-            return new File(mongooseFile.id, mongooseFile.contributionId, mongooseFile.filename, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
+        const mongooseFiles = await MongooseFile.find();
+        await mongooseFile.populate('contribution').execPopulate();
+        return mongooseFiles.map((mongooseFile) => {
+            return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
         });
     }
 

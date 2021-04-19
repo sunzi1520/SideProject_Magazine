@@ -1,7 +1,7 @@
 'use strict';
 
 //Application
-const {UploadFiles} = require('./FileUseCases');
+const {UploadFiles, GetFilesByContribution } = require('./FileUseCases');
 
 //Domain
 const Contribution = require('../../domain/models/Contribution');
@@ -30,7 +30,7 @@ async function CreateContribution(contributorId, magazineId, title, files,
         }
 
         //Restrict: First due of the magazine is not over
-        if (new Date() >= new Date(magazine.closureDate)) {
+        if (new Date() > new Date(magazine.closureDate)) {
             throw new Error('ERR_NEW_ENTRY_DENIED');
         }
 
@@ -39,14 +39,7 @@ async function CreateContribution(contributorId, magazineId, title, files,
         //#region Flow
         
         const newContribution = new Contribution(null, contributor, magazine, title);
-        const contribution = await contributionRepository.persist(newContribution);
-
-        if (files) {
-            const attachedFiles = await UploadFiles(files, contribution, {fileSystem, fileRepository});
-            contribution.attach(attachedFiles);
-        }
-
-        return contribution;
+        return await contributionRepository.persist(newContribution);
 
         //#endregion
     } catch(err) {
@@ -54,48 +47,28 @@ async function CreateContribution(contributorId, magazineId, title, files,
     }
 }
 
-async function UpdateContribution(id, contributorId, magazineId, title, files,
-    {accountRepository, magazineRepository, contributionRepository, fileSystem, fileRepository}) {
+async function ChangeTitle(id, title, {contributionRepository}) {
     try {
         //#region Pre-conditions
 
-            //Restrict: A contribution must have at least a file
-            /*Group decision: Remove the restriction at 15 Apr 2021
-            if (!files) {
-            throw new Error('ERR_FILE_NOT_FOUND');
-            } */
-
-            //Check if contributor exists
-            const contributor = await accountRepository.get(contributorId);
-            if (!contributor) {
-            throw new Error('ERR_CONTRIBUTOR_NOT_EXISTING');
+            //Check if contribution exists
+            const oldContribution = await contributionRepository.get(id);
+            if (!oldContribution) {
+                throw new Error('ERR_CONTRIBUTION_NOT_EXISTING');
             }
 
-            //Check if magazine exists
-            const magazine = await magazineRepository.get(magazineId);
-            if (!magazine) {
-            throw new Error('ERR_MAGAZINE_NOT_EXISTING');
-            }
-
-            //Restrict: First due of the magazine is not over
-            if (new Date() >= new Date(magazine.finalClosureDate)) {
-            throw new Error('ERR_MODIFIED_ENTRY_DENIED');
+            //Restrict: Final due of the magazine is not over
+            if (new Date() > new Date(oldContribution.magazine.finalClosureDate)) {
+                throw new Error('ERR_MODIFIED_ENTRY_DENIED');
             }
 
         //#endregion
 
         //#region Flow
-            const oldContribution = await contributionRepository.get(id);
-            const newContribution = new Contribution(null, contributor, magazine, title);
+        
+            const newContribution = new Contribution(null, null, null, title);
             await oldContribution.merge(newContribution);
-            const contribution = await contributionRepository.merge(oldContribution);
-
-            if (files) {
-                const attachedFiles = await UploadFiles(files, contribution, {fileSystem, fileRepository});
-                contribution.attach(attachedFiles);
-            }
-
-            return contribution;
+            return contributionRepository.merge(oldContribution);
 
         //#endregion
     } catch(err) {
@@ -103,4 +76,12 @@ async function UpdateContribution(id, contributorId, magazineId, title, files,
     }
 }
 
-module.exports = { UpdateContribution, CreateContribution }
+async function GetContribution(id, {contributionRepository}) {
+    return contributionRepository.get(id);
+}
+
+async function GetContributionByFaculty(faculty, {contributionRepository}) {
+    return contributionRepository.getByFaculty(faculty);
+}
+
+module.exports = { CreateContribution, ChangeTitle, GetContribution, GetContributionByFaculty }

@@ -7,14 +7,42 @@
 # Update
 ---
 
+Date: 4:30 AM 20 Apr 2021
+1. Changes:
+- Add middlewares for routing /files
+- Seperate the use case `Update Contribution` into other three use cases `Upload Files`, `Delete a File`, and `Change Title`
+- Flatten the use case `Create Contribution`
+
+2. Add new API:
+
+**Contribution API**
+- **GET** /contributions/:id<br/>
+Get lists of a contribution (lack of showing files)
+
+- **GET** /faculty/:faculty<br/>
+Get lists of contributions based on facuty
+
+**File API**
+- **POST** /files/contribution/:contributionId<br/>
+Upload a file (lack of showing files)
+
+3. Fix bugs:
+- Accessing authorized resources without a token do not return the expected message
+Cause: The implementation is not proper
+Solution: Correct the implementation
+
+- Description: Cannot download a specific file with a given id, error message is: filename must be a string
+Cause: The use case DownloadFile returns a string which is the path of the required file, but the Controller handles it as an object
+Solution: Correct the way controller handles the result
+
 Date: 20 Apr 2021
 1. Changes:
 - It will return `Error403:No token provided` when no token is provided to access authorized resources.
 
 2. Fix bugs:
 - When delete a user, it returns an error with the message: 'Cannot read property `fullname` of undefined' <br/>
-- Cause: Do not change the implementation of `persist` in the account repository followed the new use case, so that, when created, an account document does not have `information` field initially. <br/>
-- Solution: Update the implementation of `persist` in the account repository
+Cause: Do not change the implementation of `persist` in the account repository followed the new use case, so that, when created, an account document does not have `information` field initially. <br/>
+Solution: Update the implementation of `persist` in the account repository
 
 Date: 19 Apr 2021
 1. API changes: 
@@ -240,21 +268,41 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - message: String || Object
 
 **PUT** /contributions/:id<br/>
-**Description**: A student updates a contribution<br/>
+**Description**: A student changes the title of a contribution<br/>
 **Request**
 1. **Header**
 - x-access-token: String
 2. **Body**
-- magazine: String (Magazine ID)
 - title: String
-- article: .doc or.docx
-- pictures: image/ 
 
 **Reponse**
 - exitcode: 0 is OK
 - contribution: id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected, files (Aray of Files(id, filename, createdAt))
 - message: String || Object
 
+**GET** /contributions/:id<br/>
+**Description**: A user views the content of a contribution<br/>
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+- exitcode: 0 is OK
+- contributions: id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected
+- message: String || Object
+
+**GET** /contributions/faculty/:faculty<br/>
+**Description**: A user views the list of contributions by faculty<br/>
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+- exitcode: 0 is OK
+- contribution: [id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected]
+- message: String || Object
 
 ## File Routes
 
@@ -268,7 +316,6 @@ Solution: Implement a constraint before carrying out the creating use cases.
 **Reponse**
 *Download*
 
-
 **DELETE** /files/:id<br/>
 **Description**: A user deletes a specific file by a given ID<br/>
 **Request**
@@ -279,3 +326,15 @@ Solution: Implement a constraint before carrying out the creating use cases.
 **Reponse**
 - exitcode: 0 is OK
 - message: String || Object
+
+**POST** /files/contribution/:contributionId<br/>
+**Description**: A user want to see a specific contribution by given ID<br/>
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+- exitcode
+- contribution: (id, contributionId, contributionTitle, filename, filetype, createdAt)
+- messge

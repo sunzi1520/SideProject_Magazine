@@ -13,7 +13,7 @@ module.exports = class extends ContributionRepository {
         const mongooseContribution = new MongooseContribution({contributor, magazine, title, isSelected});
         await mongooseContribution.save();
         await mongooseContribution.populate('contributor', '_id email information.fullname').execPopulate();
-        await mongooseContribution.populate('magazine', '_id name published_year').execPopulate();
+        await mongooseContribution.populate('magazine', '_id name published_year closureDate finalClosureDate').execPopulate();
         return new Contribution(mongooseContribution.id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
     }
 
@@ -21,11 +21,10 @@ module.exports = class extends ContributionRepository {
         const contributor = contributionEntity.contributor.id;
         const magazine = contributionEntity.magazine.id;
         const {id, title, isSelected} = contributionEntity;
-        const mongooseContribution = new MongooseContribution.findByIdAndUpdate(id, {contributor, magazine, title, isSelected});
+        const mongooseContribution = await MongooseContribution.findByIdAndUpdate(id, {contributor, magazine, title, isSelected}, {new: true});
         await mongooseContribution.populate('contributor', '_id email information.fullname').execPopulate();
-        await mongooseContribution.populate('magazine', '_id name published_year').execPopulate();
+        await mongooseContribution.populate('magazine', '_id name published_year closureDate finalClosureDate').execPopulate();
         return new Contribution(mongooseContribution.id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
-
     }
 
     async remove(contributionId) {
@@ -34,15 +33,41 @@ module.exports = class extends ContributionRepository {
     }
 
     async get(contributionId) {
-        const mongooseContribution = await MongooseContribution.findOne({_id: magazineId});
+        const mongooseContribution = await MongooseContribution.findById(contributionId);
         if (mongooseContribution) {
             await mongooseContribution.populate('contributor', '_id email role information.fullname').execPopulate();
-            await mongooseContribution.populate('magazine', '_id name published_year').execPopulate();
+            await mongooseContribution.populate('magazine', '_id name published_year closureDate finalClosureDate').execPopulate();
         }
         else {
             return null;
         }
         return new Contribution(mongooseContribution.id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
+    }
+
+    async getByFaculty(contributorFaculty) {
+        console.log(contributorFaculty)
+        const mongooseContributions = await MongooseContribution.aggregate([
+            {'$lookup': {
+                'from': 'Accounts',
+                'localField': 'contributor',
+                'foreignField': '_id',
+                'as': 'contributor'
+            }},
+            {'$unwind': '$contributor'},
+            {'$lookup': {
+                'from': 'Magazines',
+                'localField': 'magazine',
+                'foreignField': '_id',
+                'as': 'magazine'
+            }},
+            {'$unwind': {'path': '$magazine', 'preserveNullAndEmptyArrays': true}},
+            {'$match': {$expr: {$eq: [contributorFaculty, '$contributor.faculty']}}}
+        ]).exec();
+        
+        return mongooseContributions.map((mongooseContribution) => {
+            return new Contribution(mongooseContribution._id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
+        });
+        
     }
 
     async find() {
@@ -63,7 +88,7 @@ module.exports = class extends ContributionRepository {
                 let: {magazine_id: '$magazine'},
                 pipeline: [
                     {$match: {$expr: {$eq: ['$_id', '$$magazine_id']}}},
-                    {$project: {_id: 1, name: 1, published_year: 1}}
+                    {$project: {_id: 1, name: 1, published_year: 1,  closureDate: 1, finalClosureDate: 1}}
                 ],
                 as: 'magazine'
             }},

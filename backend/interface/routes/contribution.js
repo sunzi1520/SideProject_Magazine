@@ -3,9 +3,11 @@
 const express = require('express'),
       router = express.Router({ mergeParams: true });
 //Controller
-const { updateContribution, createContribution } = require('../controllers/ContributionController');
+const { changeTitle, createContribution, getContribution, getContributionByFaculty } = require('../controllers/ContributionController');
 
+router.get('/:id', getContribution);
+router.get('/faculty/:faculty', getContributionByFaculty);
 router.post('/', createContribution);
-router.put('/:id', updateContribution);
+router.put('/:id', changeTitle);
 
 module.exports = router;

@@ -12,8 +12,8 @@ module.exports = class extends MagazineRepository {
         const { name, published_year, closureDate, finalClosureDate, isLocked } = magazineEntity;
         const mongooseMagazine = new MongooseMagazine({manager, name, published_year, closureDate, finalClosureDate, isLocked, coordinators});
         await mongooseMagazine.save();
-        await mongooseMagazine.populate('manager', '_id username role information.fullname').execPopulate();
-        await mongooseMagazine.populate('coordinators', '_id username role faculty information.fullname information.email').execPopulate();
+        await mongooseMagazine.populate('manager', '_id email role information.fullname').execPopulate();
+        await mongooseMagazine.populate('coordinators', '_id email role faculty information.fullname').execPopulate();
         return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
     }
 
@@ -29,8 +29,8 @@ module.exports = class extends MagazineRepository {
     async get(magazineId) {
         const mongooseMagazine = await MongooseMagazine.findOne({_id: magazineId});
         if (mongooseMagazine) {
-            await mongooseMagazine.populate('manager', '_id username role information.fullname information.email').execPopulate();
-            await mongooseMagazine.populate('coordinators', '_id username role faculty information.fullname information.email').execPopulate();
+            await mongooseMagazine.populate('manager', '_id email role information.fullname').execPopulate();
+            await mongooseMagazine.populate('coordinators', '_id email role faculty information.fullname').execPopulate();
         }
         return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
     }
@@ -43,7 +43,7 @@ module.exports = class extends MagazineRepository {
                 let: {managerId: '$manager'},
                 pipeline: [
                     {$match: {$expr: {$eq: ['$_id', '$$managerId']}}},
-                    {$project: {_id: 1, username: 1, role: 1, 'information.fullname': 1, 'information.email': 1}}
+                    {$project: {_id: 1, email: 1, role: 1, 'information.fullname': 1}}
                 ],
                 as: 'manager'
             }},
@@ -53,11 +53,12 @@ module.exports = class extends MagazineRepository {
                 let: {coordinatorsId: '$coordinators'},
                 pipeline: [
                     {$match: {$expr: {$in: ['$_id', '$$coordinatorsId']}}},
-                    {$project: {_id: 1, username: 1, role: 1, faculty: 1, 'information.fullname': 1, 'information.email': 1}}
+                    {$project: {_id: 1, email: 1, role: 1, faculty: 1, 'information.fullname': 1}}
                 ],
                 as: 'coordinators'
             }},
-        ]);
+        ]).exec();
+
         return mongooseMagazines.map((mongooseMagazine) => {
             return new Magazine(mongooseMagazine._id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
         })

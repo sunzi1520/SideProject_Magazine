@@ -1,6 +1,6 @@
 'use strict';
 
-const { DeleteFile, GetFile } = require("../../application/use-cases/FileUseCases");
+const { DeleteFile, DownloadFile, UploadFiles } = require("../../application/use-cases/FileUseCases");
 
 
 async function deleteFile(req, res, next) {
@@ -12,12 +12,14 @@ async function deleteFile(req, res, next) {
 
     try {
         //Process
-        const status = await DeleteFile(id, serviceLocator);
+        const file = await DeleteFile(id, serviceLocator);
+
+        console.log(file);
         
         //Output
         res.status(200).send({
             exitcode: 0,
-            file: serviceLocator.fileSerializer.serialize(contribution.files),
+            file: serviceLocator.fileSerializer.serializeWContribution(file),
             message: ''
         })
     } catch (err) {
@@ -30,7 +32,7 @@ async function deleteFile(req, res, next) {
 
 }
 
-async function getFile(req, res, next) {
+async function downloadFile(req, res, next) {
     //Content
     const serviceLocator = req.server.app.serviceLocator;
 
@@ -39,10 +41,10 @@ async function getFile(req, res, next) {
 
     try {
         //Process
-        const file = await GetFile(id, serviceLocator);
+        const file = await DownloadFile(id, serviceLocator);
         
         //Output
-        res.status(200).download(file.path + file.name)
+        res.status(200).download(file)
     } catch (err) {
         res.status(500).send({
             exitcode: err.code || 1,
@@ -51,7 +53,47 @@ async function getFile(req, res, next) {
     }
 }
 
+async function uploadFiles(req, res, next) {
+    //Context
+    const serviceLocator = req.server.app.serviceLocator;
+
+    //Input
+    const {contributionId} = req.params;
+    const {article, pictures} = req.files;
+    const {agreement} = req.body;
+    let files = [];
+    if (pictures) files = await Array.from(pictures);
+    files.push(article);
+
+    if (!agreement) {
+        return res.status(200).send({
+            exitcode: 1,
+            files: "",
+            message: "Lack of agreement"
+        })
+    }
+
+    try {
+        //Process
+        const uploadedFiles = await UploadFiles(files, contributionId, serviceLocator);
+
+        //Output
+        res.status(500).send({
+            exitcode: 0,
+            files: serviceLocator.fileSerializer.serialize(uploadedFiles),
+            message: ''
+        })
+    } catch(err) {
+        res.status(500).send({
+            exitcode: err.code || 1,
+            files: [],
+            message: err.message || err || 'Unknown'
+        })
+    }
+}
+
 module.exports = {
     deleteFile,
-    getFile
+    downloadFile,
+    uploadFiles
 }

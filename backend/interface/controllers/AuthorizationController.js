@@ -36,7 +36,10 @@ async function verifyAccessToken(req, res, next) {
 
         //Input
         const token = req.body.token || req.headers['x-access-token'] || req.cookies['x-access-token'];
-        if (!token) throw 'No token provided'
+        if (!token) throw {
+            code: 900,
+            message: 'No token provided'
+        }
 
         //Process
         const payload = await VerifyAccessToken(token, serviceLocator);

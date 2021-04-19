@@ -91,7 +91,6 @@ module.exports = {
         const serviceLocator = req.server.app.serviceLocator;
 
         //input
-        const {magazineId} = req.params;
 
         //process
         try { 
