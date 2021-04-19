@@ -9,18 +9,33 @@ const BcryptSecuredPasswordManager = require('../security/bcryptSecuredPasswordM
 const JwtAccessTokenManager = require('../security/jwtAccessTokenManager');
 //// Mailer
 const NodemailerMailer = require('../notification/NodemailerMailer');
+//// File System
+const FileSystem = require('../filesystem/file-system');
 //// Serializer
 const AccountSerializer = require('../../interface/serializer/AccountSerializer');
+const FileSerializer = require('../../interface/serializer/FileSerializer');
+const ContributionSerializer = require('../../interface/serializer/ContributionSerializer');
 
 function buildBeans() {
 
   const beans = {
+    //Security
     securedPasswordManager: new BcryptSecuredPasswordManager(),
     accessTokenManager: new JwtAccessTokenManager(),
+
+    //Message Delivery
+    mailer: new NodemailerMailer(),
+
+    //File System
+    fileSystem: new FileSystem(),
+
+    //Serializers
     accountSerializer: new AccountSerializer(),
-    mailer: new NodemailerMailer()
+    fileSerializer: new FileSerializer(),
+    contributionSerializer: new ContributionSerializer(),
   };
 
+  //Repositories
   if (environment.database.dialect === constants.SUPPORTED_DATABASE.IN_MEMORY.DIALECT) {
     throw new Error('Add in-memory support');
   } else if (environment.database.dialect === constants.SUPPORTED_DATABASE.MONGO.DIALECT) {

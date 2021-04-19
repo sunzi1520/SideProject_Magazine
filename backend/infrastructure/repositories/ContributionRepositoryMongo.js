@@ -7,14 +7,24 @@ const ContributionRepository = require('../../domain/repositories/ContributionRe
 module.exports = class extends ContributionRepository {
 
     async persist(contributionEntity) {
-        const {contributor, magazine, title, isSelected} = contributionEntity;
+        const contributor = contributionEntity.contributor.id;
+        const magazine = contributionEntity.magazine.id;
+        const {title, isSelected} = contributionEntity;
         const mongooseContribution = new MongooseContribution({contributor, magazine, title, isSelected});
         await mongooseContribution.save();
-        await mongooseContribution.populate('contributor', '')
+        await mongooseContribution.populate('contributor', '_id email information.fullname').execPopulate();
+        await mongooseContribution.populate('magazine', '_id name published_year').execPopulate();
         return new Contribution(mongooseContribution.id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
     }
 
     async merge(contributionEntity) {
+        const contributor = contributionEntity.contributor.id;
+        const magazine = contributionEntity.magazine.id;
+        const {id, title, isSelected} = contributionEntity;
+        const mongooseContribution = new MongooseContribution.findByIdAndUpdate(id, {contributor, magazine, title, isSelected});
+        await mongooseContribution.populate('contributor', '_id email information.fullname').execPopulate();
+        await mongooseContribution.populate('magazine', '_id name published_year').execPopulate();
+        return new Contribution(mongooseContribution.id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
 
     }
 
@@ -26,8 +36,11 @@ module.exports = class extends ContributionRepository {
     async get(contributionId) {
         const mongooseContribution = await MongooseContribution.findOne({_id: magazineId});
         if (mongooseContribution) {
-            await mongooseContribution.populate('contributor', '_id username role information.fullname information.email').execPopulate();
+            await mongooseContribution.populate('contributor', '_id email role information.fullname').execPopulate();
             await mongooseContribution.populate('magazine', '_id name published_year').execPopulate();
+        }
+        else {
+            return null;
         }
         return new Contribution(mongooseContribution.id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
     }
@@ -40,7 +53,7 @@ module.exports = class extends ContributionRepository {
                 let: {contributor_id: '$contributor'},
                 pipeline: [
                     {$match: {$expr: {$eq: ['$_id', '$$contributor_id']}}},
-                    {$project: {_id: 1, username: 1, role: 1, 'information.fullname': 1, 'information.email': 1}}
+                    {$project: {_id: 1, email: 1, role: 1, 'information.fullname': 1}}
                 ],
                 as: 'contributor'
             }},

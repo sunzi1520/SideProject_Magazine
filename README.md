@@ -1,164 +1,271 @@
-#Inital account
+# Inital account
 ---
+
 **Username**: admin
 **Password**: admin
 
-#API
+# Update
 ---
 
-##Authorization Routes
+Date: 19 Apr 2021
+1. API changes: 
+- Use plural words instead of singular words. E.g. /account -change-> /accounts
+- Remove 'username' and use 'email' instead.
+
+2. Add new API:
+**Account API**
+- **GET** /accounts/role/:role
+Get accounts by a given role
+
+**Contribution API**
+- **POST** /contributions
+Create a new contribution with files
+- **PUT** /contributions
+Update an existing contribution with files
+
+**File API**
+- **GET** /files/:id
+Download a specific file
+- **DELETE** /files/:id
+Delete a specific file
+
+3. Fix bugs:
+- Magazine IDs when getting the whole list are null.
+Cause: When getting a list, the ID property of its elements is '_id' instead of '_id'.
+Solution: Change 'id' into '_id' in Concrete Repositories.
+Extension: Fix for other cases such as accounts.
+
+- The system allows to duplicate accounts. 
+Cause: A constraint of duplicated values for 'email' or 'username' has not been implemented in both sides of the back-end server and the database.
+Solution: Implement a constraint before carrying out the creating use cases.
+
+# API
+---
+
+## Authorization Routes
 
 **POST** /auth
 **Description**: A user sends his credential to gain access token in order to access the system.
 **Request**
-- **Header**
-- **Body**
--- **username: String**
--- **password: String**
+1. **Header**
+2. **Body**
+- **email: String**
+- **password: String**
 
 **Response**
 - exitcode: 0 is OK
 - token: String
 - message: String || Object
 
-##Account Routes
+## Account Routes
 
-**POST** /account
-**Descrption**: A user creates a new account by providing necessary data
+**POST** /accounts
+**Description**: A user creates a new account by providing necessary data
 **Request**
-- **Header**
--- x-access-token: string
-- **Body**
--- **username: String**
--- **password: String**
--- **role: String**
--- **faculty: String**
--- **email: String**
--- fullname: String
--- dob: DateString
--- gender: String
--- phone: String of numbers
+1. **Header**
+- x-access-token: string
+2. **Body**
+- **email: String**
+- **password: String**
+- **role: String**
+- **faculty: String**
+- fullname: String
+- dob: DateString
+- gender: String
+- phone: String of numbers
 
 **Response**
 - exitcode: 0 is ok
 - message: String || Object
 
-**GET** /account
-**Descrption**: A user view a list of accounts that he is allowed to view
+**GET** /accounts
+**Description**: A user view a list of accounts that he is allowed to view
 **Request**
-- **Header**
--- x-access-token: String
-- **Body**
+1. **Header**
+- x-access-token: String
+2. **Body**
 
 **Response**
--- exitcode: 0 is OK
--- accounts: Array of Object(id, username, role, faculty, fullname, gender, dob, email, phone)
--- message: String || Object
+- exitcode: 0 is OK
+- accounts: Array of Object(id, email, role, faculty, fullname, gender, dob, phone)
+- message: String || Object
 
-**GET** /account/:id
-**Descrption**: A user view information of a specific account by a given ID
+**GET** /accounts/:id
+**Description**: A user view information of a specific account by a given ID
 **Request**
-- **Header**
--- x-access-token: String
-- **Body**
+1. **Header**
+- x-access-token: String
+2. **Body**
 
 **Reponse**
 - exitcode: 0 is OK
-- account: Object(id, username, role, faculty, fullname, gender, dob, email, phone)
+- account: Object(id, email, role, faculty, fullname, gender, dob, phone)
 - message: String || Object
 
-**GET** /account/me
- **Descrption**: A user views information of his account
+**GET** /accounts/me
+**Description**: A user views information of his account
 **Request**
-- **Header**
--- x-access-token: String
-- **Body**
+1. **Header**
+- x-access-token: String
+2. **Body**
 
 **Reponse**
 - exitcode: 0 is OK
-- account: Object(id, username, role, faculty, fullname, gender, dob, email, phone)
+- account: Object(id, email, role, faculty, fullname, gender, dob, phone)
 - message: String || Object
 
-**PUT** /account/:id
- **Descrption**: A user updates information of a specific account by a given ID
+**GET** /accounts/role/:role
+**Description**: A user gets a list of accounts by a given role
 **Request**
-- **Header**
--- x-access-token: String
-- **Body**
--- username: String
--- password: String
--- role: String
--- faculty: String
--- email: String
--- fullname: String
--- dob: DateString
--- gender: String
--- phone: String of numbers
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+- exitcode: 0 is OK
+- accounts: Array of Object(id, email, role, faculty, fullname, gender, dob, phone)
+- message: String || Object
+
+**PUT** /accounts/:id
+**Description**: A user updates information of a specific account by a given ID
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+- email: String
+- password: String
+- role: String
+- faculty: String
+- fullname: String
+- dob: DateString
+- gender: String
+- phone: String of numbers
 *(Note: unchanged fields should give their original data instead of a blank)*
 
 **Reponse**
 - exitcode: 0 is OK
 - message: String || Object
 
-**DELETE** /account/:id
- **Descrption**: A user deletes a specific account by a given ID
+**DELETE** /accounts/:id
+**Description**: A user deletes a specific account by a given ID
 **Request**
-- **Header**
--- x-access-token: String
-- **Body**
+1. **Header**
+- x-access-token: String
+2. **Body**
 
 **Reponse**
 - exitcode: 0 is OK
 - message: String || Object
 
-##Magazine routes
+## Magazine routes
 
-**POST** /magazine
- **Descrption**: A user creates a new magazine by giving necessary data
+**POST** /magazines
+**Description**: A user creates a new magazine by giving necessary data
 **Request**
-- **Header**
--- x-access-token: String
-- **Body**
--- **manager_id: String** *(Note: this is ObjectId of the manager)*
--- **name: String**
--- **published_year: Number** *(e.g. 2021)*
--- **closureDate: DateString**
--- **finalClosureDate: DateString**
+1. **Header**
+- x-access-token: String
+2. **Body**
+- **manager_id: String** *(Note: this is ObjectId of the manager)*
+- **name: String**
+- **published_year: Number** *(e.g. 2021)*
+- **closureDate: DateString**
+- **finalClosureDate: DateString**
 
 **Reponse**
 - exitcode: 0 is OK
 - message: String || Object
 
-**GET** /magazine
- **Descrption**: A user views a list of magazines
+**GET** /magazines
+**Description**: A user views a list of magazines
 **Request**
-- **Header**
--- x-access-token: String
-- **Body**
+1. **Header**
+- x-access-token: String
+2. **Body**
 
 **Reponse**
 - exitcode: 0 is OK
-- magazines: Array of Object(id, name, published_year, manager: Object(id, username, fullname, email), closureDate, finalClosureDate)
+- magazines: Array of Object(id, name, published_year, manager: Object(id, email, fullname, email), closureDate, finalClosureDate)
 - message: String || Object
 
- **GET** /magazine/:id
- **Descrption**: A user views the details of a specific magazine by a given ID
+**GET** /magazines/:id
+**Description**: A user views the details of a specific magazine by a given ID
 **Request**
-- **Header**
--- x-access-token: String
-- **Body**
+1. **Header**
+- x-access-token: String
+2. **Body**
 
 **Reponse**
 - exitcode: 0 is OK
-- magazine: Object(id, name, published_year, manager: Object(id, username, fullname, email), closureDate, finalClosureDate)
+- magazine: Object(id, name, published_year, manager: Object(id, email, fullname), closureDate, finalClosureDate)
 - message: String || Object
 
- **DELETE** /magazine/:id
- **Descrption**: A user deletes a specific magazine by a given ID
+**DELETE** /magazines/:id
+**Description**: A user deletes a specific magazine by a given ID
 **Request**
-- **Header**
--- x-access-token: String
-- **Body**
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+- exitcode: 0 is OK
+- message: String || Object
+
+## Contribution Routes
+
+**POST** /contributions/
+**Description**: A student creates a new contribution
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+- **magazine**: String (Magazine ID)
+- **title**: String
+- **agreement**: Any
+- article: .doc or.docx
+- pictures: image/ 
+**Note**: Either a aritcle or pictures must be provided.
+
+**Reponse**
+- exitcode: 0 is OK
+- contribution: id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected, files (Aray of Files(id, filename, createdAt))
+- message: String || Object
+
+**PUT** /contributions/:id
+**Description**: A student updates a contribution
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+- magazine: String (Magazine ID)
+- title: String
+- article: .doc or.docx
+- pictures: image/ 
+
+**Reponse**
+- exitcode: 0 is OK
+- contribution: id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected, files (Aray of Files(id, filename, createdAt))
+- message: String || Object
+
+
+## File Routes
+
+**GET** /files/:id
+**Description**: A user downloads a file by given ID
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+*Download*
+
+
+**DELETE** /files/:id
+**Description**: A user deletes a specific file by a given ID
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
 
 **Reponse**
 - exitcode: 0 is OK

@@ -18,11 +18,19 @@ module.exports = class {
       throw new Error('ERR_METHOD_NOT_IMPLEMENTED');
     }
 
-    getByUsername(accountUsername) {
+    getAll() {
       throw new Error('ERR_METHOD_NOT_IMPLEMENTED');
     }
 
-    find() {
+    getByEmail(email) {
+      throw new Error('ERR_METHOD_NOT_IMPLEMENTED');
+    }
+
+    getByRole(role) {
+      throw new Error('ERR_METHOD_NOT_IMPLEMENTED');
+    }
+
+    getManyByIds(idList) {
       throw new Error('ERR_METHOD_NOT_IMPLEMENTED');
     }
 }

@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const contributionSchema = new Schema(
   {
-    contributor_id: { type: Schema.Types.ObjectId, ref: "Account" },
-    magazine_id: { type: Schema.Types.ObjectId, ref: "Magazine" },
+    contributor: { type: Schema.Types.ObjectId, ref: "Account" },
+    magazine: { type: Schema.Types.ObjectId, ref: "Magazine" },
     title: String,
     isSelected: { type: Boolean, default: false}
   },

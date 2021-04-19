@@ -7,10 +7,11 @@ const FileRepository = require('../../domain/repositories/FileRepository');
 module.exports = class extends FileRepository {
 
     async persist(fileEntity) {
-        const { contributionId, filename, path } = fileEntity;
-        const mongooseFile = new MongooseFile({ contributionId, filename, path });
+        const contribution = fileEntity.contribution.id;
+        const { filename, path, filetype } = fileEntity;
+        const mongooseFile = new MongooseFile({ contribution, filename, path, filetype });
         await mongooseFile.save();
-        return new File(mongooseFile.id, mongooseFile.contributionId, mongooseFile.filename, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
+        return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.uploadedAt, mongooseFile.updatedAt);
       }
     
     async merge(fileEntity) {

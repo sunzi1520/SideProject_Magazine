@@ -10,11 +10,12 @@ module.exports = {
 
         //input
         const {manager_id, name, published_year, closureDate, finalClosureDate, isLocked, coordinators} = req.body;
+        const coordinatorList = await Array.from(coordinators);
 
         //process
         try { 
-            const magazine = await CreateMagazine(name, manager_id, published_year, closureDate, finalClosureDate, coordinators, isLocked, serviceLocator);
-    
+            const magazine = await CreateMagazine(name, manager_id, published_year, closureDate, finalClosureDate, coordinatorList, isLocked, serviceLocator);
+            
             //output
             res.status(200).send({
                 exitcode: 0,

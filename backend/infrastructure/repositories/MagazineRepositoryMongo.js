@@ -7,12 +7,14 @@ const MagazineRepository = require('../../domain/repositories/MagazineRepository
 module.exports = class extends MagazineRepository {
 
     async persist(magazineEntity) {
-        const { manager, name, published_year, closureDate, finalClosureDate, isLocked, coordinators } = magazineEntity;
+        const manager = magazineEntity.manager.id;
+        const coordinators = Array.from(magazineEntity.coordinators, coordinator => coordinator.id);
+        const { name, published_year, closureDate, finalClosureDate, isLocked } = magazineEntity;
         const mongooseMagazine = new MongooseMagazine({manager, name, published_year, closureDate, finalClosureDate, isLocked, coordinators});
         await mongooseMagazine.save();
         await mongooseMagazine.populate('manager', '_id username role information.fullname').execPopulate();
+        await mongooseMagazine.populate('coordinators', '_id username role faculty information.fullname information.email').execPopulate();
         return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
-
     }
 
     async merge(magazineEntity) {
@@ -57,7 +59,7 @@ module.exports = class extends MagazineRepository {
             }},
         ]);
         return mongooseMagazines.map((mongooseMagazine) => {
-            return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
+            return new Magazine(mongooseMagazine._id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
         })
     }
 

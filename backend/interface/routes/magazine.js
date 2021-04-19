@@ -5,9 +5,8 @@ const express = require('express'),
 //Controller
 const { getMagazine, createMagazine, deleteMagazine, listMagazines} = require('../controllers/MagazineController');
 
+router.get('/', listMagazines);
 router.get('/:magazineId', getMagazine);
 router.post('/', createMagazine);
 router.delete('/:magazineId', deleteMagazine);
-router.get('/', listMagazines);
-
 module.exports = router;

@@ -9,10 +9,10 @@ async function getAccessToken(req, res, next) {
         const serviceLocator = req.server.app.serviceLocator;
 
         //Input
-        const { username, password } = req.body;
+        const { email, password } = req.body;
 
         //Process
-        const token = await GetAccessToken(username, password, serviceLocator);
+        const token = await GetAccessToken(email, password, serviceLocator);
         
         //Output
         res.status(200).send({

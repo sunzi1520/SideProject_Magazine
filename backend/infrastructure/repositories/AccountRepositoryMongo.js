@@ -8,64 +8,62 @@ const { Mongoose } = require('mongoose');
 module.exports = class extends AccountRepository {
 
   async persist(accountEntity) {
-    const {username, password, role, faculty, email} = accountEntity;
-    const mongooseAccount = new MongooseAccount({username, password, role, faculty, information: {email}});
+    const {email, password, role, faculty} = accountEntity;
+    const mongooseAccount = new MongooseAccount({email, password, role, faculty});
     await mongooseAccount.save();
-    return new Account(mongooseAccount.id, mongooseAccount.username,  mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.email);
+    if (!mongooseAccount) return null;
+    return new Account(mongooseAccount.id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, mongooseAccount.information.phone, mongooseAccount.createdAt, mongooseAccount.updatedAt);
   }
 
-  async mergeInformation(accountEntity) {
-    const {id, username, password, role, faculty, 
-          email, phone, fullname, gender, dob} = accountEntity;
-    const mongooseAccount = await MongooseAccount.findByIdAndUpdate({_id: id}, {$set: {username, password, role, faculty,
-                                                                information: {email, phone, fullname, gender, dob}}}, { new: true });
-    return new Account(mongooseAccount._id, mongooseAccount.username, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty,
-      mongooseAccount.information.email, mongooseAccount.information.phone, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, 
-      mongooseAccount.isActive || false , mongooseAccount.lastAccess, 
-      mongooseAccount.createdAt, mongooseAccount.updatedAt);
+  async merge(accountEntity) {
+    const {id, email, password, role, faculty, 
+          fullname, gender, dob, phone} = accountEntity;
+    const mongooseAccount = await MongooseAccount.findByIdAndUpdate(id, {$set: {email, password, role, faculty,
+                                                                information: {phone, fullname, gender, dob}}}, { new: true });
+    return new Account(mongooseAccount.id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, mongooseAccount.information.phone, mongooseAccount.createdAt, mongooseAccount.updatedAt);
   }
 
   async remove(accountId) {
     const mongooseAccount = await MongooseAccount.findByIdAndDelete(accountId);
-    return new Account(mongooseAccount._id, mongooseAccount.username, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.email, mongooseAccount.information.phone, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob);
+    return new Account(mongooseAccount.id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, mongooseAccount.information.phone, mongooseAccount.createdAt, mongooseAccount.updatedAt);
   }
 
   async get(accountId) {
     const mongooseAccount = await MongooseAccount.findById(accountId);
-    return new Account(mongooseAccount._id, mongooseAccount.username, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty,
-                        mongooseAccount.information.email, mongooseAccount.information.phone, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, 
-                        mongooseAccount.isActive || false, mongooseAccount.lastAccess, 
-                        mongooseAccount.createdAt, mongooseAccount.updatedAt);
+    if (!mongooseAccount) return null;
+    return new Account(mongooseAccount.id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, mongooseAccount.information.phone, mongooseAccount.createdAt, mongooseAccount.updatedAt);
   }
 
-  async getByUsername(username) {
-    const mongooseAccount = await MongooseAccount.findOne({username});
-    return new Account(mongooseAccount._id, mongooseAccount.username, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty,
-                        mongooseAccount.information.email, mongooseAccount.information.phone, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, 
-                        mongooseAccount.isActive || false, mongooseAccount.lastAccess, 
-                        mongooseAccount.createdAt, mongooseAccount.updatedAt);
-  }
-
-  async find() {
+  async getAll() {
     const mongooseAccounts = await MongooseAccount.find();
     return mongooseAccounts.map((mongooseAccount) => {
-      return new Account(mongooseAccount._id, mongooseAccount.username, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty,
-                         mongooseAccount.information.email, mongooseAccount.information.phone, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, 
-                         mongooseAccount.isActive || false, mongooseAccount.lastAccess, 
-                         mongooseAccount.createdAt, mongooseAccount.updatedAt);
+      return new Account(mongooseAccount.id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, mongooseAccount.information.phone, mongooseAccount.createdAt, mongooseAccount.updatedAt);
     });
   }
 
-  async findByRole(role) {
+  async getByEmail(email) {
+    const mongooseAccount = await MongooseAccount.findOne({email});
+    if (!mongooseAccount) return null;
+    return new Account(mongooseAccount.id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, mongooseAccount.information.phone, mongooseAccount.createdAt, mongooseAccount.updatedAt);
+  }
+
+  async getByRole(role) {
     const mongooseAccounts = await MongooseAccount.aggregate([
       {$match: { 'role': role }},
     ]).exec();
 
+    console.log(mongooseAccounts);
+
     return mongooseAccounts.map((mongooseAccount) => {
-      return new Account(mongooseAccount._id, mongooseAccount.username, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty,
-                         mongooseAccount.information.email, mongooseAccount.information.phone, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, 
-                         mongooseAccount.isActive || false, mongooseAccount.lastAccess, 
-                         mongooseAccount.createdAt, mongooseAccount.updatedAt);
+      return new Account(mongooseAccount._id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, mongooseAccount.information.phone, mongooseAccount.createdAt, mongooseAccount.updatedAt);
+    });
+  }
+
+  async getManyByIds(idList) {
+    const mongooseAccounts = await MongooseAccount.find({_id: id_list});
+
+    return mongooseAccounts.map((mongooseAccount) => {
+      return new Account(mongooseAccount._id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information.fullname, mongooseAccount.information.gender, mongooseAccount.information.dob, mongooseAccount.information.phone, mongooseAccount.createdAt, mongooseAccount.updatedAt);
     });
   }
 }

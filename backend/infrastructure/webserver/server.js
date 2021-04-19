@@ -35,10 +35,11 @@ const createServer = () => {
     })
 
     app.use('/auth', require('../../interface/routes/auth'));
-    app.use('/account', AuthorizationController.verifyAccessToken, require('../../interface/routes/account'));
-    app.use('/magazine', AuthorizationController.verifyAccessToken, require('../../interface/routes/magazine'));
-    app.use('/comment', AuthorizationController.verifyAccessToken, require('../../interface/routes/comment'));
-    app.use('/contact', AuthorizationController.verifyAccessToken, require('../../interface/routes/message'));
+    app.use('/accounts', AuthorizationController.verifyAccessToken, require('../../interface/routes/account'));
+    app.use('/magazines', AuthorizationController.verifyAccessToken, require('../../interface/routes/magazine'));
+    app.use('/contributions', AuthorizationController.verifyAccessToken, require('../../interface/routes/contribution'));
+    app.use('/comments', AuthorizationController.verifyAccessToken, require('../../interface/routes/comment'));
+    app.use('/contacts', AuthorizationController.verifyAccessToken, require('../../interface/routes/message'));
 
     app.use(function(req, res, next) {
         res.status(404).end();

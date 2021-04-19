@@ -1,7 +1,7 @@
 'use strict';
 
 //Use cases
-const { ListAccounts, CreateAccount, DeleteAccount, GetAccount, UpdateAccount } = require('../../application/use-cases/AccountUseCases');
+const { ListAccounts, CreateAccount, DeleteAccount, GetAccount, UpdateAccount, ListAccountsByRole } = require('../../application/use-cases/AccountUseCases');
 
 async function createFirstAdmin() {
     //Context
@@ -14,7 +14,7 @@ async function createFirstAdmin() {
         const listAccounts = await ListAccounts(serviceLocator);
         
         if (listAccounts.length < 1) {
-            const account = await CreateAccount('admin', 'admin', 'admin', 'System Administrator', 'group4.greenwich@gmail.com', serviceLocator);
+            const account = await CreateAccount('group4.greenwich@gmail.com', 'admin', 'admin', 'System Administrator', null, null, null, null, serviceLocator);
         
             //Output
             console.log('The first administrator has been created.');
@@ -33,12 +33,12 @@ async function createAccount(req, res, next) {
         const serviceLocator = req.server.app.serviceLocator;
 
         //Input
-        const username = req.body.username.trim().toLowerCase();
+        const email = req.body.email.trim().toLowerCase();
         const password = req.body.password.trim();
-        const {role, faculty, email} = req.body;
+        const {role, faculty, fullname, gender, dob, phone} = req.body;
         
         //Process
-        const account = await CreateAccount(username, password, role, faculty, email, serviceLocator);
+        const account = await CreateAccount(email, password, role, faculty, fullname, gender, dob, phone, serviceLocator);
 
         //Output
         if (account) {
@@ -47,6 +47,7 @@ async function createAccount(req, res, next) {
 
         res.status(200).send({
             exitcode: 0,
+            account: serviceLocator.accountSerializer.serialize(account),
             message: ''
         });
     }
@@ -54,6 +55,7 @@ async function createAccount(req, res, next) {
         console.log('CreateAccount from AccountController: Error: ' + err);
         res.status(500).send({
             exitcode: err.code || 500,
+            account: {},
             message: err.message || err || 'Unknown'
         })
     }    
@@ -66,14 +68,15 @@ async function updateAccount(req, res, next) {
 
         //Input
         const {id} = req.params;
-        const {username, password, role, faculty, email, phone, fullname, gender, dob} = req.body;
+        const {email, password, role, faculty, phone, fullname, gender, dob} = req.body;
         
         //Process
-        const account = await UpdateAccount(id, username, password, role, faculty, fullname, gender, dob, email, phone, serviceLocator);
+        const account = await UpdateAccount(id, email, password, role, faculty, fullname, gender, dob, phone, serviceLocator);
 
         //Output
         res.status(200).send({
             exitcode: 0,
+            account: serviceLocator.accountSerializer.serialize(account),
             message: ''
         });
     }
@@ -81,6 +84,7 @@ async function updateAccount(req, res, next) {
         console.log('UpdateAccount from AccountController: Error: ' + err);
         res.status(500).send({
             exitcode: err.code || 500,
+            account: {},
             message: err.message || err || 'Unknown'
         })
     }    
@@ -200,4 +204,42 @@ async function getSelf(req, res, next) {
     }
 }
 
-module.exports = { createFirstAdmin, listAccounts, createAccount, deleteAccount, getAccount, updateAccount, getSelf }
+async function listAccountsByRole(req, res, next) {
+
+    //Context
+    const serviceLocator = req.server.app.serviceLocator;
+
+    //Input
+    const { role } = req.params
+
+    try {
+        //Process
+        const accounts = await ListAccountsByRole(role, serviceLocator);
+
+        //Output
+        res.status(200).send({
+            exitcode: 0,
+            accounts: serviceLocator.accountSerializer.serialize(accounts),
+            message: ''
+        });
+    } catch(err) {
+        console.log('ListAccounts from AccountController: Error: ' + err);
+        res.status(500).send({
+            exitcode: err.code || 500,
+            accounts: [],
+            message: err.message || err || 'Unknown'
+        })
+    }
+
+}
+
+module.exports = { 
+    createFirstAdmin, 
+    listAccounts,
+    createAccount,
+    deleteAccount,
+    getAccount,
+    updateAccount,
+    getSelf,
+    listAccountsByRole
+}

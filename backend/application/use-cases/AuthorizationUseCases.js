@@ -2,8 +2,8 @@
 
 module.exports = {
 
-    async GetAccessToken (username, password, { accountRepository, accessTokenManager, securedPasswordManager }) {
-        const account = await accountRepository.getByUsername(username);
+    async GetAccessToken (email, password, { accountRepository, accessTokenManager, securedPasswordManager }) {
+        const account = await accountRepository.getByEmail(email);
         if (!account || !(await securedPasswordManager.check(password, account.password))) {
             throw new Error('Bad credentials');
         }

@@ -3,8 +3,10 @@ const Schema = mongoose.Schema;
 
 const fileSchema = new Schema(
   {
-    contribution_id: { type: Schema.Types.ObjectId, ref: "Contribution" },
+    contribution: { type: Schema.Types.ObjectId, ref: "Contribution" },
+    filename: String,
     path: String,
+    filetype: String
   }, 
   {
     timestamps: true

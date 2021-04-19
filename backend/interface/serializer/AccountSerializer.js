@@ -3,15 +3,12 @@
 const _serializeSingleAccount = (account) => {
   return {
     'id': account.id,
-    'username': account.username,
+    'email': account.email,
     'role': account.role,
     'faculty': account.faculty,
-    'isActive': account.isActive,
-    'lastAccess': account.lastAccess,
     'fullname': account.fullname,
     'gender': account.gender,
     'dob': account.dob,
-    'email': account.email,
     'phone': account.phone,
     'createdAt': account.createdAt
   };
