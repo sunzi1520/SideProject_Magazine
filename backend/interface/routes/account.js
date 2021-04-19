@@ -7,10 +7,10 @@ const AccountController = require('../controllers/AccountController');
 
 router.get('/', AccountController.listAccounts);
 router.get('/role/:role', AccountController.listAccountsByRole);
-router.get('/account/me', AccountController.getSelf);
-router.get('/account/:id', AccountController.getAccount);
-router.post('/account/', AccountController.createAccount);
-router.delete('/account/:id', AccountController.deleteAccount);
-router.put('/account/:id', AccountController.updateAccount);
+router.get('/me', AccountController.getSelf);
+router.get('/:id', AccountController.getAccount);
+router.post('/', AccountController.createAccount);
+router.delete('/:id', AccountController.deleteAccount);
+router.put('/:id', AccountController.updateAccount);
 
 module.exports = router;
