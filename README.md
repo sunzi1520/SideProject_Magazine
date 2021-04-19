@@ -28,11 +28,11 @@ Upload a file (lack of showing files)
 
 3. Fix bugs:
 - Accessing authorized resources without a token do not return the expected message
-Cause: The implementation is not proper
-Solution: Correct the implementation
+Cause: The implementation is not proper<br/>
+Solution: Correct the implementation<br/>
 
-- Description: Cannot download a specific file with a given id, error message is: filename must be a string
-Cause: The use case DownloadFile returns a string which is the path of the required file, but the Controller handles it as an object
+- Description: Cannot download a specific file with a given id, error message is: filename must be a string<br/>
+Cause: The use case DownloadFile returns a string which is the path of the required file, but the Controller handles it as an object<br/>
 Solution: Correct the way controller handles the result
 
 Date: 20 Apr 2021
