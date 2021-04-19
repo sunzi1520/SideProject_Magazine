@@ -7,7 +7,7 @@
 # Update
 ---
 
-Date: 4:30 AM 20 Apr 2021
+## Date: 4:30 AM 20 Apr 2021
 1. Changes:
 - Add middlewares for routing /files
 - Seperate the use case `Update Contribution` into other three use cases `Upload Files`, `Delete a File`, and `Change Title`
@@ -35,7 +35,7 @@ Solution: Correct the implementation<br/>
 Cause: The use case DownloadFile returns a string which is the path of the required file, but the Controller handles it as an object<br/>
 Solution: Correct the way controller handles the result
 
-Date: 20 Apr 2021
+## Date: 20 Apr 2021
 1. Changes:
 - It will return `Error403:No token provided` when no token is provided to access authorized resources.
 
@@ -44,7 +44,7 @@ Date: 20 Apr 2021
 Cause: Do not change the implementation of `persist` in the account repository followed the new use case, so that, when created, an account document does not have `information` field initially. <br/>
 Solution: Update the implementation of `persist` in the account repository
 
-Date: 19 Apr 2021
+## Date: 19 Apr 2021
 1. API changes: 
 - Use plural words instead of singular words. E.g. /account -change-> /accounts
 - Remove 'username' and use 'email' instead.
