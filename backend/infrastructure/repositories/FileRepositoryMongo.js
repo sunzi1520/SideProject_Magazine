@@ -3,6 +3,8 @@
 const File = require('../../domain/models/File');
 const MongooseFile = require('../orm/mongoose/schemas/File');
 const FileRepository = require('../../domain/repositories/FileRepository');
+const Contribution = require('../../domain/models/Contribution');
+const mongoose = require('mongoose');
 
 module.exports = class extends FileRepository {
 
@@ -43,7 +45,7 @@ module.exports = class extends FileRepository {
 
     async getByContribution(contributionId) {
         const mongooseFiles = await MongooseFile.aggregate([
-            {'$match': {'contribution': contributionId}},
+            {'$match': {'contribution': mongoose.Types.ObjectId(contributionId)}},
             {'$lookup': {
                 'from': 'Contributions',
                 'localField': 'contribution',
@@ -51,12 +53,13 @@ module.exports = class extends FileRepository {
                 'as': 'contribution'
             }},
             {'$unwind': {
-                'path': '$contirbution',
+                'path': '$contribution',
                 'preserveNullAndEmptyArrays': true
             }}
         ]).exec();
         return mongooseFiles.map((mongooseFile) => {
-            return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
+            const contribution = new Contribution(mongooseFile.contribution._id, mongooseFile.contribution.contributor, mongooseFile.contribution.magazine, mongooseFile.contribution.title, mongooseFile.contribution.isSeleted, mongooseFile.contribution.createdAt, mongooseFile.contribution.updatedAt);
+            return new File(mongooseFile._id, mongooseFile.filename, contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
         });
     }
     
@@ -64,7 +67,8 @@ module.exports = class extends FileRepository {
         const mongooseFiles = await MongooseFile.find();
         await mongooseFiles.populate('contribution').execPopulate();
         return mongooseFiles.map((mongooseFile) => {
-            return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
+            const contribution = new Contribution(contribution.id, contribution.contributor, contribution.magazine, contribution.title, contribution.isSeleted, ontribution.createdAt, ontribution.updatedAt);
+            return new File(mongooseFile._id, mongooseFile.filename, contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
         });
     }
 

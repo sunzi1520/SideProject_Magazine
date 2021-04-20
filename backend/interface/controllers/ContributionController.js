@@ -117,7 +117,7 @@ async function getContribution(req, res, next) {
     //Input
     const {id} = req.params;
 
-    try {
+/*     try { */
         //Process
         console.log(id);
         const contribution = await GetContribution(id, serviceLocator);
@@ -129,7 +129,7 @@ async function getContribution(req, res, next) {
         const files = await GetFilesByContribution(contribution.id, serviceLocator);
         contribution.attach(files);
 
-        if (contribution.files) contribution.files = serviceLocator.contributionSerializer.serialize(contribution.files)
+        if (contribution.files) contribution.files = serviceLocator.fileSerializer.serialize(contribution.files)
 
         //Output
         return res.status(200).send({
@@ -138,13 +138,13 @@ async function getContribution(req, res, next) {
             message: ''
         })
 
-    } catch(err) {
+/*     } catch(err) {
         res.status(500).send({
             exitcode: err.code || 1,
             contribution: {},
             message: err.message || err || 'Unknown'
         })
-    }
+    } */
 }
 
 async function getContributionByFaculty(req, res, next) {
@@ -247,6 +247,37 @@ async function listContributionsBySelf(req, res, next) {
     try {
         //Process
         let contributions = await ListContributionsByAccount(id, serviceLocator);
+
+        if (contributions && contributions.length > 0) {
+            contributions = await serviceLocator.contributionSerializer.serialize(contributions);
+        }
+
+        //Output
+        return res.status(200).send({
+            exitcode: 0,
+            contributions,
+            message: ''
+        })
+    } catch(err) {
+        return res.status(500).send({
+            exitcode: err.code || 1,
+            contributions: [],
+            message: err.message || err || 'Unknown'
+        })
+    }
+
+}
+
+async function SelectContribution(req, res, next) {
+    //Context
+    const serviceLocator = req.server.app.serviceLocator;
+
+    //Input
+    const {contributionId} = req.params;
+
+    try {
+        //Process
+        let contributions = await SelectContribution(contributionId, serviceLocator);
 
         if (contributions && contributions.length > 0) {
             contributions = await serviceLocator.contributionSerializer.serialize(contributions);

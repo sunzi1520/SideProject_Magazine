@@ -1,7 +1,6 @@
 'use strict';
 
 //Application
-const {UploadFiles, GetFilesByContribution } = require('./FileUseCases');
 
 //Domain
 const Contribution = require('../../domain/models/Contribution');
@@ -92,4 +91,37 @@ async function ListContributionsByAccount(accountId, {contributionRepository}) {
     return contributionRepository.getByAccount(accountId);
 }
 
-module.exports = { CreateContribution, ChangeTitle, GetContribution, GetContributionByFaculty, ListContributions, ListContributionsByAccount }
+async function SelectContribution(id, {contributionRepository}) {
+    const contribution = await contributionRepository.get(id);
+    contribution.isSelect = true;
+    return contributionRepository.merge(contribution);
+}
+
+async function DeselectContribution(id, {contributionRepository}) {
+    const contribution = await contributionRepository.get(id);
+    contribution.isSelect = false;
+    return contributionRepository.merge(contribution);
+}
+
+async function GetSelectedContribution({contributionRepository}) {
+    return contributionRepository.getByBeingSelected();
+}
+
+async function GetSelectedContributionByFaculty(faculty, {contributionRepository}) {
+    const contributions = await contributionRepository.getByBeingSelected();
+    return await Array.from(contributions, (contribution) => contribution.contributor.faculty == faculty);
+
+}
+
+module.exports = { 
+    CreateContribution,
+    ChangeTitle,
+    GetContribution,
+    GetContributionByFaculty,
+    ListContributions,
+    ListContributionsByAccount,
+    SelectContribution,
+    DeselectContribution,
+    GetSelectedContribution,
+    GetSelectedContributionByFaculty
+}

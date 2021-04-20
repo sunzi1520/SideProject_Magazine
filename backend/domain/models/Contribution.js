@@ -13,7 +13,7 @@ module.exports = class {
     }
 
     async attach(files) {
-        this.files = await files.map(file => delete file.contribution);
+        this.files = files;
     }
 
     merge({id, contributor, magazine, title, isSelected}) {
