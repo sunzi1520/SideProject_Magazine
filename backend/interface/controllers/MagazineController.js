@@ -10,7 +10,8 @@ module.exports = {
 
         //input
         const {manager_id, name, published_year, closureDate, finalClosureDate, isLocked, coordinators} = req.body;
-        const coordinatorList = await Array.from(coordinators);
+        let coordinatorList = [];
+        if (coordinators) coordinatorList = await Array.from(coordinators);
 
         //process
         try { 

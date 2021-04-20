@@ -6,8 +6,15 @@
 
 # Update
 ---
+## Date: 01 : 02 PM 20 Apr 2021
+1. Fix bugs (Hotfix):
+- Cannot create magazine. Error: (node:19084 ) UnhandledPromiseRejectionWarning: TypeError: Cannot convert undefined or null to object<br/>
+Cause: In `MagazineController.createMagazine()`, there is a line `const  coordinatorList = await Array.from(coordinators)` to convert the passed list of coordinators for the magazine. However, because not mandatory, this list can be missed and cause the error.<br/>
+Solution: Change `coordinatorList` into a variable with an initial value as an empty array. Then, check if there is `coordinators` value and convert it into `coordinatorList`.<br/>
 
-## Date: 4:30 AM 20 Apr 2021
+
+
+## Date: 04:30 AM 20 Apr 2021
 1. Changes:
 - Add middlewares for routing /files
 - Seperate the use case `Update Contribution` into other three use cases `Upload Files`, `Delete a File`, and `Change Title`
