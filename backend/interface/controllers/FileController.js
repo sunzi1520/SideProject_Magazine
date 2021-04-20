@@ -2,7 +2,6 @@
 
 const { DeleteFile, DownloadFile, UploadFiles } = require("../../application/use-cases/FileUseCases");
 
-
 async function deleteFile(req, res, next) {
     //Content
     const serviceLocator = req.server.app.serviceLocator;

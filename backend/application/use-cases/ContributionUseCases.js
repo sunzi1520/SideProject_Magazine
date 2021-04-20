@@ -93,13 +93,13 @@ async function ListContributionsByAccount(accountId, {contributionRepository}) {
 
 async function SelectContribution(id, {contributionRepository}) {
     const contribution = await contributionRepository.get(id);
-    contribution.isSelect = true;
+    contribution.isSelected = true;
     return contributionRepository.merge(contribution);
 }
 
 async function DeselectContribution(id, {contributionRepository}) {
     const contribution = await contributionRepository.get(id);
-    contribution.isSelect = false;
+    contribution.isSelected = false;
     return contributionRepository.merge(contribution);
 }
 
@@ -109,8 +109,22 @@ async function GetSelectedContribution({contributionRepository}) {
 
 async function GetSelectedContributionByFaculty(faculty, {contributionRepository}) {
     const contributions = await contributionRepository.getByBeingSelected();
-    return await Array.from(contributions, (contribution) => contribution.contributor.faculty == faculty);
+    console.log(contributions);
+    console.log(faculty)
+    let filteredContributions = new Array();
+    await contributions.forEach(contribution => {
+        if (contribution.contributor.faculty == faculty) filteredContributions.push(contribution);
+    })
+    return filteredContributions;
+}
 
+async function GetSelectedContributionByAccount(accountId, {contributionRepository}) {
+    const contributions = await contributionRepository.getByBeingSelected();
+    let filteredContributions = new Array();
+    await contributions.forEach(contribution => {
+        if (contribution.contributor.id == accountId) filteredContributions.push(contribution);
+    })
+    return filteredContributions
 }
 
 module.exports = { 
@@ -123,5 +137,6 @@ module.exports = {
     SelectContribution,
     DeselectContribution,
     GetSelectedContribution,
-    GetSelectedContributionByFaculty
+    GetSelectedContributionByFaculty,
+    GetSelectedContributionByAccount
 }

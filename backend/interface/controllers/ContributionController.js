@@ -1,6 +1,15 @@
 'use strict';
 
-const { ChangeTitle, CreateContribution, GetContribution, GetContributionByFaculty, ListContributions, ListContributionsByAccount } = require("../../application/use-cases/ContributionUseCases");
+const { 
+    //Create
+    CreateContribution, 
+    //Read
+    GetContribution, GetContributionByFaculty, ListContributions, ListContributionsByAccount,
+    GetSelectedContribution, GetSelectedContributionByFaculty, GetSelectedContributionByAccount,
+    //Update
+    ChangeTitle, SelectContribution, DeselectContribution
+    //Delete 
+ } = require("../../application/use-cases/ContributionUseCases");
 const { UploadFiles, GetFilesByContribution } = require("../../application/use-cases/FileUseCases");
 const { ListAccountsByRole } = require("../../application/use-cases/AccountUseCases");
 
@@ -49,7 +58,7 @@ async function createContribution(req, res, next) {
             const attachedFiles = await UploadFiles(files, contribution, serviceLocator);
             contribution.attach(attachedFiles);
         }
-        console.log(contribution);
+
         if (contribution.files) contribution.files = await serviceLocator.fileSerializer.serialize(contribution.files);
         //Output
 
@@ -157,7 +166,6 @@ async function getContributionByFaculty(req, res, next) {
     try {
         //Process
         const contribution = await GetContributionByFaculty(faculty, serviceLocator);
-        console.log(contribution);
 
         //Output
         return res.status(200).send({
@@ -185,7 +193,6 @@ async function listContributions(req, res, next) {
         //Process
         let contributions = await ListContributions(serviceLocator);
 
-        console.log(contributions);
         if (contributions && contributions.length > 0) {
             contributions = await serviceLocator.contributionSerializer.serialize(contributions);
         }
@@ -268,16 +275,67 @@ async function listContributionsBySelf(req, res, next) {
 
 }
 
-async function SelectContribution(req, res, next) {
+async function selectContribution(req, res, next) {
     //Context
     const serviceLocator = req.server.app.serviceLocator;
 
     //Input
-    const {contributionId} = req.params;
+    const {id} = req.params;
 
     try {
         //Process
-        let contributions = await SelectContribution(contributionId, serviceLocator);
+        let contribution = await SelectContribution(id, serviceLocator);
+        
+        //Output
+        res.status(200).send({
+            exitcode: 0,
+            contribution: serviceLocator.contributionSerializer.serialize(contribution),
+            message: ''
+        })
+    } catch (err) {
+        res.status(500).send({
+            exitcode: err.code || 1,
+            contribution: {},
+            message: err.message || err || 'Unknown'
+        })
+    }
+}
+
+async function deselectContribution(req, res, next) {
+    //Context
+    const serviceLocator = req.server.app.serviceLocator;
+
+    //Input
+    const {id} = req.params;
+
+    try {
+        //Process
+        let contribution = await DeselectContribution(id, serviceLocator);
+        
+        //Output
+        res.status(200).send({
+            exitcode: 0,
+            contribution: serviceLocator.contributionSerializer.serialize(contribution),
+            message: ''
+        })
+    } catch (err) {
+        res.status(500).send({
+            exitcode: err.code || 1,
+            contribution: {},
+            message: err.message || err || 'Unknown'
+        })
+    }
+}
+
+async function getSelectedContributions(req, res, next) {
+    //Context
+    const serviceLocator = req.server.app.serviceLocator;
+
+    //Input
+
+    try {
+        //Process
+        let contributions = await GetSelectedContribution(serviceLocator);
 
         if (contributions && contributions.length > 0) {
             contributions = await serviceLocator.contributionSerializer.serialize(contributions);
@@ -296,7 +354,66 @@ async function SelectContribution(req, res, next) {
             message: err.message || err || 'Unknown'
         })
     }
+}
 
+async function getSelectedContributionsByFaculty(req, res, next) {
+    //Context
+    const serviceLocator = req.server.app.serviceLocator;
+
+    //Input
+    const {faculty} = req.params;
+
+    try {
+        //Process
+        let contributions = await GetSelectedContributionByFaculty(faculty, serviceLocator);
+
+        if (contributions && contributions.length > 0) {
+            contributions = await serviceLocator.contributionSerializer.serialize(contributions);
+        }
+
+        //Output
+        return res.status(200).send({
+            exitcode: 0,
+            contributions,
+            message: ''
+        })
+    } catch(err) {
+        return res.status(500).send({
+            exitcode: err.code || 1,
+            contributions: [],
+            message: err.message || err || 'Unknown'
+        })
+    }
+}
+
+async function getSelectedContributionsByAccount(req, res, next) {
+    //Context
+    const serviceLocator = req.server.app.serviceLocator;
+
+    //Input
+    const {accountId} = req.params;
+
+    try {
+        //Process
+        let contributions = await GetSelectedContributionByAccount(accountId, serviceLocator);
+
+        if (contributions && contributions.length > 0) {
+            contributions = await serviceLocator.contributionSerializer.serialize(contributions);
+        }
+
+        //Output
+        return res.status(200).send({
+            exitcode: 0,
+            contributions,
+            message: ''
+        })
+    } catch(err) {
+        return res.status(500).send({
+            exitcode: err.code || 1,
+            contributions: [],
+            message: err.message || err || 'Unknown'
+        })
+    }
 }
 
 module.exports = {
@@ -306,5 +423,10 @@ module.exports = {
     getContributionByFaculty,
     listContributions,
     listContributionsByAccount,
-    listContributionsBySelf
+    listContributionsBySelf,
+    selectContribution,
+    deselectContribution,
+    getSelectedContributions,
+    getSelectedContributionsByFaculty,
+    getSelectedContributionsByAccount
 }

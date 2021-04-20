@@ -39,7 +39,7 @@ const createServer = () => {
     app.use('/magazines', AuthorizationController.verifyAccessToken, require('../../interface/routes/magazine'));
     app.use('/contributions', AuthorizationController.verifyAccessToken, require('../../interface/routes/contribution'));
     app.use('/comments', AuthorizationController.verifyAccessToken, require('../../interface/routes/comment'));
-    app.use('/files', AuthorizationController.verifyAccessToken, require('../../interface/routes/file'));
+    app.use('/files', require('../../interface/routes/file'));
 
     app.use(function(req, res, next) {
         res.status(404).end();

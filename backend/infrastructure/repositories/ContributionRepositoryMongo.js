@@ -81,7 +81,6 @@ module.exports = class extends ContributionRepository {
     }
 
     async getByAccount(accountId) {
-        console.log(accountId)
         return this.find({'contributor': mongoose.Types.ObjectId(accountId)});
     }
 
@@ -94,7 +93,6 @@ module.exports = class extends ContributionRepository {
     }
 
     async find(query) {
-        console.log(query);
         const mongooseContributions = await MongooseContribution.aggregate([
             {'$match': query},
             {'$lookup': {
@@ -122,7 +120,6 @@ module.exports = class extends ContributionRepository {
                 'preserveNullAndEmptyArrays': true
             }},
         ]).exec()
-        console.log(mongooseContributions);
         return mongooseContributions.map((mongooseContribution) => {
             const contributor = new Account(mongooseContribution.contributor._id.toString(), mongooseContribution.contributor.email, mongooseContribution.contributor.password, mongooseContribution.contributor.role, mongooseContribution.contributor.faculty, mongooseContribution.contributor.information.fullname, mongooseContribution.contributor.gender, mongooseContribution.contributor.dob, mongooseContribution.contributor.phone, mongooseContribution.contributor.createdAt, mongooseContribution.contributor.updatedAt);
             const magazine = new Magazine(mongooseContribution.magazine._id.toString(), mongooseContribution.magazine.manager, mongooseContribution.magazine.name, mongooseContribution.magazine.closureDate, mongooseContribution.magazine.finalClosureDate, mongooseContribution.magazine.coordinators, mongooseContribution.magazine.published_year, mongooseContribution.magazine.isLocked, mongooseContribution.magazine.createdAt, mongooseContribution.magazine.updatedAt);
