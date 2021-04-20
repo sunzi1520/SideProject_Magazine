@@ -18,7 +18,13 @@ module.exports = class extends MagazineRepository {
     }
 
     async merge(magazineEntity) {
-
+        const manager = magazineEntity.manager.id;
+        const coordinators = Array.from(magazineEntity.coordinators, coordinator => coordinator.id);
+        const { id, name, published_year, closureDate, finalClosureDate, isLocked } = magazineEntity;
+        const mongooseMagazine = await MongooseMagazine.findByIdAndUpdate(id, {manager, name, published_year, closureDate, finalClosureDate, isLocked, coordinators}, {new: true});
+        await mongooseMagazine.populate('manager', '_id email role information.fullname').execPopulate();
+        await mongooseMagazine.populate('coordinators', '_id email role faculty information.fullname').execPopulate();
+        return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
     }
 
     async remove(magazineId) {

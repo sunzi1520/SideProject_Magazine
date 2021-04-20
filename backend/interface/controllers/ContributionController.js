@@ -183,8 +183,9 @@ async function listContributions(req, res, next) {
 
     try {
         //Process
-        const contributions = await ListContributions(serviceLocator);
+        let contributions = await ListContributions(serviceLocator);
 
+        console.log(contributions);
         if (contributions && contributions.length > 0) {
             contributions = await serviceLocator.contributionSerializer.serialize(contributions);
         }
@@ -199,7 +200,7 @@ async function listContributions(req, res, next) {
         return res.status(500).send({
             exitcode: err.code || 1,
             contributions: [],
-            message: err || err.message || 'Unknown'
+            message: err.message || err || 'Unknown'
         })
     }
 
@@ -214,7 +215,7 @@ async function listContributionsByAccount(req, res, next) {
 
     try {
         //Process
-        const contributions = await ListContributionsByAccount(accountId, serviceLocator);
+        let contributions = await ListContributionsByAccount(accountId, serviceLocator);
 
         if (contributions && contributions.length > 0) {
             contributions = await serviceLocator.contributionSerializer.serialize(contributions);
@@ -230,7 +231,7 @@ async function listContributionsByAccount(req, res, next) {
         return res.status(500).send({
             exitcode: err.code || 1,
             contributions: [],
-            message: err || err.message || 'Unknown'
+            message: err.message || err || 'Unknown'
         })
     }
 
@@ -241,11 +242,11 @@ async function listContributionsBySelf(req, res, next) {
     const serviceLocator = req.server.app.serviceLocator;
 
     //Input
-    const {id} = req.payload.id;
+    const {id} = req.payload;
 
     try {
         //Process
-        const contributions = await ListContributionsByAccount(id, serviceLocator);
+        let contributions = await ListContributionsByAccount(id, serviceLocator);
 
         if (contributions && contributions.length > 0) {
             contributions = await serviceLocator.contributionSerializer.serialize(contributions);
@@ -261,7 +262,7 @@ async function listContributionsBySelf(req, res, next) {
         return res.status(500).send({
             exitcode: err.code || 1,
             contributions: [],
-            message: err || err.message || 'Unknown'
+            message: err.message || err || 'Unknown'
         })
     }
 

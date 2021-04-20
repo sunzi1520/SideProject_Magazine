@@ -25,4 +25,17 @@ module.exports = class {
         this.createdAt = createdAt;
     }
 
+    merge({ id, manager, name, 
+        closureDate, finalClosureDate, coordinators,   
+        published_year, isLocked }) {
+        if (id && this.id != id) this.id = id;
+        if (manager && this.manager != manager) this.manager = manager;
+        if (name && this.name != name) this.name = name;
+        if (closureDate && this.closureDate != closureDate) this.closureDate = closureDate;
+        if (finalClosureDate && this.finalClosureDate != finalClosureDate) this.finalClosureDate = finalClosureDate;
+        if (coordinators && this.coordinators != coordinators) this.coordinators = coordinators;
+        if (published_year && this.published_year != published_year) this.published_year = published_year;
+        if (isLocked && this.isLocked != isLocked) this.isLocked = isLocked;
+    }
+
 }

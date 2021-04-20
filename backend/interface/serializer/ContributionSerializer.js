@@ -10,7 +10,7 @@ const _serializeSingleContribution = (contribution) => {
     'contributorId': contribution.contributor.id,
     'contributorEmail': contribution.contributor.email,
     'contributorFaculty': contribution.contributor.faculty,
-    'contributorName': contribution.contributor.information.fullname,
+    'contributorName': contribution.contributor.fullname,
     'isSelected': contribution.isSelected,
     'files': contribution.files,
     'createdAt': contribution.createdAt,

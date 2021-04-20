@@ -6,7 +6,7 @@
 
 # Update
 ---
-## Date: 05 : 02 PM 20 Apr 2021
+## Date: 06 : 02 PM 20 Apr 2021
 1. Add new API:
 **Contribution API**<br/>
 - **GET** /contributions<br/>
@@ -386,7 +386,7 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - message: String || Object
 
 **POST** /files/contribution/:contributionId<br/>
-**Description**: A user want to see a specific contribution by given ID<br/>
+**Description**: A user want to upload file for an existing contribution<br/>
 **Request**
 1. **Header**
 - x-access-token: String

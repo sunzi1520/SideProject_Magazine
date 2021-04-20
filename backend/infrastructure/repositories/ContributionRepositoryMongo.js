@@ -3,6 +3,10 @@
 const Contribution = require('../../domain/models/Contribution');
 const MongooseContribution = require('../orm/mongoose/schemas/Contribution');
 const ContributionRepository = require('../../domain/repositories/ContributionRepository');
+const Account = require('../../domain/models/Account');
+const Magazine = require('../../domain/models/Magazine');
+const mongoose = require('mongoose');
+
 
 module.exports = class extends ContributionRepository {
 
@@ -45,7 +49,6 @@ module.exports = class extends ContributionRepository {
     }
 
     async getByFaculty(contributorFaculty) {
-        console.log(contributorFaculty)
         const mongooseContributions = await MongooseContribution.aggregate([
             {'$lookup': {
                 'from': 'Accounts',
@@ -74,7 +77,8 @@ module.exports = class extends ContributionRepository {
     }
 
     async getByAccount(accountId) {
-        return this.find({'contributor': accountId});
+        console.log(accountId)
+        return this.find({'contributor': mongoose.Types.ObjectId(accountId)});
     }
 
     async getAll() {
@@ -82,31 +86,39 @@ module.exports = class extends ContributionRepository {
     }
 
     async find(query) {
+        console.log(query);
         const mongooseContributions = await MongooseContribution.aggregate([
-            {$match: query},
-            {$lookup: {
-                from: 'Accounts',
-                let: {contributor_id: '$contributor'},
-                pipeline: [
-                    {$match: {$expr: {$eq: ['$_id', '$$contributor_id']}}},
-                    {$project: {_id: 1, email: 1, role: 1, 'information.fullname': 1}}
+            {'$match': query},
+            {'$lookup': {
+                'from': 'Accounts',
+                'let': {'contributor_id': '$contributor'},
+                'pipeline': [
+                    {'$match': {'$expr': {'$eq': ['$_id', '$$contributor_id']}}}
                 ],
-                as: 'contributor'
+                'as': 'contributor'
             }},
-            {$unwind: '$contributor'},
-            {$lookup: {
-                from: 'Magzines',
-                let: {magazine_id: '$magazine'},
-                pipeline: [
-                    {$match: {$expr: {$eq: ['$_id', '$$magazine_id']}}},
-                    {$project: {_id: 1, name: 1, published_year: 1,  closureDate: 1, finalClosureDate: 1}}
+            {'$unwind': {
+                'path': '$contributor',
+                'preserveNullAndEmptyArrays': true
+            }},
+            {'$lookup': {
+                'from': 'Magazines',
+                'let': {'magazine_id': '$magazine'},
+                'pipeline': [
+                    {'$match': {'$expr': {'$eq': ['$_id', '$$magazine_id']}}}
                 ],
-                as: 'magazine'
+                'as': 'magazine'
             }},
-            {$unwind: '$magazine'},
-        ])
+            {'$unwind': {
+                'path': '$magazine',
+                'preserveNullAndEmptyArrays': true
+            }},
+        ]).exec()
+        console.log(mongooseContributions);
         return mongooseContributions.map((mongooseContribution) => {
-            return new Contribution(mongooseContribution._id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
+            const contributor = new Account(mongooseContribution.contributor._id, mongooseContribution.contributor.email, mongooseContribution.contributor.password, mongooseContribution.contributor.role, mongooseContribution.contributor.faculty, mongooseContribution.contributor.information.fullname, mongooseContribution.contributor.gender, mongooseContribution.contributor.dob, mongooseContribution.contributor.phone, mongooseContribution.contributor.createdAt, mongooseContribution.contributor.updatedAt);
+            const magazine = new Magazine(mongooseContribution.magazine._id, mongooseContribution.magazine.manager, mongooseContribution.magazine.name, mongooseContribution.magazine.closureDate, mongooseContribution.magazine.finalClosureDate, mongooseContribution.magazine.coordinators, mongooseContribution.magazine.published_year, mongooseContribution.magazine.isLocked, mongooseContribution.magazine.createdAt, mongooseContribution.magazine.updatedAt);
+            return new Contribution(mongooseContribution._id, contributor, magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
         });
     }
 

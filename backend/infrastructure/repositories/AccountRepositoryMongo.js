@@ -58,7 +58,7 @@ module.exports = class extends AccountRepository {
   }
 
   async getManyByIds(idList) {
-    const mongooseAccounts = await MongooseAccount.find({_id: id_list});
+    const mongooseAccounts = await MongooseAccount.find({_id: {'$in': idList}});
 
     return mongooseAccounts.map((mongooseAccount) => {
       return new Account(mongooseAccount._id, mongooseAccount.email, mongooseAccount.password, mongooseAccount.role, mongooseAccount.faculty, mongooseAccount.information['fullname'], mongooseAccount.information['gender'], mongooseAccount.information['dob'], mongooseAccount.information['phone'], mongooseAccount.createdAt, mongooseAccount.updatedAt);
