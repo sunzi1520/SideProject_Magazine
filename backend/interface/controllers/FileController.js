@@ -61,7 +61,13 @@ async function uploadFiles(req, res, next) {
     const {article, pictures} = req.files;
     const {agreement} = req.body;
     let files = [];
-    if (pictures) files = await Array.from(pictures);
+    if (pictures) {
+        if (Array.isArray(pictures)){
+            files = await Array.from(pictures);
+        } else {
+            files = new Array(pictures);
+        }
+    }
     files.push(article);
 
     if (!agreement) {
