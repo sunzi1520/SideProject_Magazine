@@ -9,17 +9,17 @@
 ## Date: 05 : 02 PM 20 Apr 2021
 1. Add new API:
 **Contribution API**<br/>
-- **GET** /contributions
-Get a list of contributions of the user
+- **GET** /contributions<br/>
+Get a list of contributions of the user<br/>
 
-- **GET** /contributions/account/
-Get a list of all contributions available in the system
+- **GET** /contributions/account/<br/>
+Get a list of all contributions available in the system<br/>
 
-- **GET** /contributions/account/:accountId
-Get a list of contributions of a specific account
+- **GET** /contributions/account/:accountId<br/>
+Get a list of contributions of a specific account<br/>
 
-2. Changes:
-- Now, `contributions/:id` shows a list of files  
+2. Changes:<br/>
+- Now, `contributions/:id` shows a list of files  <br/>
 
 ## Date: 01 : 02 PM 20 Apr 2021
 1. Fix bugs (Hotfix):
