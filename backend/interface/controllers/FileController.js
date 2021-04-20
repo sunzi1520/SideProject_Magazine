@@ -83,7 +83,7 @@ async function uploadFiles(req, res, next) {
         const uploadedFiles = await UploadFiles(files, contributionId, serviceLocator);
 
         //Output
-        res.status(500).send({
+        res.status(200).send({
             exitcode: 0,
             files: serviceLocator.fileSerializer.serialize(uploadedFiles),
             message: ''
