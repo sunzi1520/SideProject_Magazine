@@ -12,8 +12,8 @@ module.exports = class {
         this.updatedAt = updatedAt;
     }
 
-    attach(files) {
-        this.files = files;
+    async attach(files) {
+        this.files = await files.map(file => delete file.contribution);
     }
 
     merge({id, contributor, magazine, title, isSelected}) {

@@ -42,8 +42,19 @@ module.exports = class extends FileRepository {
     }
 
     async getByContribution(contributionId) {
-        const mongooseFiles = await MongooseFile.find({contribution: contributionId}).exec();
-        await mongooseFile.populate('contribution').execPopulate();
+        const mongooseFiles = await MongooseFile.aggregate([
+            {'$match': {'contribution': contributionId}},
+            {'$lookup': {
+                'from': 'Contributions',
+                'localField': 'contribution',
+                'foreignField': '_id',
+                'as': 'contribution'
+            }},
+            {'$unwind': {
+                'path': '$contirbution',
+                'preserveNullAndEmptyArrays': true
+            }}
+        ]).exec();
         return mongooseFiles.map((mongooseFile) => {
             return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
         });
@@ -51,7 +62,7 @@ module.exports = class extends FileRepository {
     
     async find() {
         const mongooseFiles = await MongooseFile.find();
-        await mongooseFile.populate('contribution').execPopulate();
+        await mongooseFiles.populate('contribution').execPopulate();
         return mongooseFiles.map((mongooseFile) => {
             return new File(mongooseFile.id, mongooseFile.filename, mongooseFile.contribution, mongooseFile.path, mongooseFile.filetype, mongooseFile.createdAt);
         });

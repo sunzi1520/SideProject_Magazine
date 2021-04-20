@@ -19,7 +19,7 @@ async function deleteFile(req, res, next) {
         //Output
         res.status(200).send({
             exitcode: 0,
-            file: serviceLocator.fileSerializer.serializeWContribution(file),
+            file: serviceLocator.fileSerializer.serialize(file),
             message: ''
         })
     } catch (err) {

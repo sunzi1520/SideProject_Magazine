@@ -53,7 +53,10 @@ module.exports = class extends ContributionRepository {
                 'foreignField': '_id',
                 'as': 'contributor'
             }},
-            {'$unwind': '$contributor'},
+            {'$unwind': {
+                'path': '$contributor',
+                'preserveNullAndEmptyArrays': true
+            }},
             {'$lookup': {
                 'from': 'Magazines',
                 'localField': 'magazine',
@@ -70,9 +73,17 @@ module.exports = class extends ContributionRepository {
         
     }
 
-    async find() {
+    async getByAccount(accountId) {
+        return this.find({'contributor': accountId});
+    }
+
+    async getAll() {
+        return this.find({});
+    }
+
+    async find(query) {
         const mongooseContributions = await MongooseContribution.aggregate([
-            {$match: {}},
+            {$match: query},
             {$lookup: {
                 from: 'Accounts',
                 let: {contributor_id: '$contributor'},
@@ -95,11 +106,8 @@ module.exports = class extends ContributionRepository {
             {$unwind: '$magazine'},
         ])
         return mongooseContributions.map((mongooseContribution) => {
-            return new Contribution(mongooseContribution.id, mongooseContribution.contributor, mongooseContribution.magazine,
-                                    mongooseContribution.title, mongooseContribution.isSelected,
-                                    mongooseContribution.createdAt, mongooseContribution.updatedAt);
+            return new Contribution(mongooseContribution._id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
         });
-
     }
 
 }

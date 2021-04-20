@@ -6,6 +6,21 @@
 
 # Update
 ---
+## Date: 05 : 02 PM 20 Apr 2021
+1. Add new API:
+**Contribution API**<br/>
+- **GET** /contributions
+Get a list of contributions of the user
+
+- **GET** /contributions/account/
+Get a list of all contributions available in the system
+
+- **GET** /contributions/account/:accountId
+Get a list of contributions of a specific account
+
+2. Changes:
+- Now, `contributions/:id` shows a list of files  
+
 ## Date: 01 : 02 PM 20 Apr 2021
 1. Fix bugs (Hotfix):
 - Cannot create magazine. Error: (node:19084) UnhandledPromiseRejectionWarning: TypeError: Cannot convert undefined or null to object<br/>
@@ -34,7 +49,7 @@ Get lists of contributions based on facuty
 Upload a file (lack of showing files)
 
 3. Fix bugs:
-- Accessing authorized resources without a token do not return the expected message
+- Accessing authorized resources without a token do not return the expected message<br/>
 Cause: The implementation is not proper<br/>
 Solution: Correct the implementation<br/>
 
@@ -301,6 +316,42 @@ Solution: Implement a constraint before carrying out the creating use cases.
 
 **GET** /contributions/faculty/:faculty<br/>
 **Description**: A user views the list of contributions by faculty<br/>
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+- exitcode: 0 is OK
+- contribution: [id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected]
+- message: String || Object
+
+**GET** /contributions<br/>
+**Description**: A user views the list of all contributions<br/>
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+- exitcode: 0 is OK
+- contribution: [id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected]
+- message: String || Object
+
+**GET** /contributions/account<br/>
+**Description**: A user views the list of contributions of his<br/>
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+- exitcode: 0 is OK
+- contribution: [id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected]
+- message: String || Object
+
+**GET** /contributions/account/:acccountId<br/>
+**Description**: A user views the list of contributions of a specific account<br/>
 **Request**
 1. **Header**
 - x-access-token: String

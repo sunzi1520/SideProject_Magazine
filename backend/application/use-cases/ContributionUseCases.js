@@ -6,7 +6,7 @@ const {UploadFiles, GetFilesByContribution } = require('./FileUseCases');
 //Domain
 const Contribution = require('../../domain/models/Contribution');
 
-async function CreateContribution(contributorId, magazineId, title, files,
+async function CreateContribution(contributorId, magazineId, title,
                                   {accountRepository, magazineRepository, contributionRepository, fileSystem, fileRepository}) {
     try {
         //#region Pre-conditions
@@ -84,4 +84,12 @@ async function GetContributionByFaculty(faculty, {contributionRepository}) {
     return contributionRepository.getByFaculty(faculty);
 }
 
-module.exports = { CreateContribution, ChangeTitle, GetContribution, GetContributionByFaculty }
+async function ListContributions({contributionRepository}) {
+    return contributionRepository.getAll();
+}
+
+async function ListContributionsByAccount(accountId, {contributionRepository}) {
+    return contributionRepository.getByAccount(accountId);
+}
+
+module.exports = { CreateContribution, ChangeTitle, GetContribution, GetContributionByFaculty, ListContributions, ListContributionsByAccount }

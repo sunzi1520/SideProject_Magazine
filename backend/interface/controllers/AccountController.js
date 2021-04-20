@@ -42,7 +42,7 @@ async function createAccount(req, res, next) {
 
         //Output
         if (account) {
-            //serviceLocator.mailer.sendMail(email, `Your username is ${account.username}\nYour password is ${password}`, 'Welcome to Magazine Contribution System of the University of Greenwich');
+            serviceLocator.mailer.sendMail(email, `Your password is ${password}`, 'Welcome to Magazine Contribution System of the University of Greenwich');
         }
 
         res.status(200).send({
@@ -103,7 +103,7 @@ async function deleteAccount(req, res, next) {
         
         //Output
         if (account) {
-            //serviceLocator.mailer.sendMail(account.email, `Hello ${account.username},\nYour account has been deleted. Contact your manager or administrator if there is a mistake.`, 'Your account is deleted');
+            serviceLocator.mailer.sendMail(account.email, `Hello ${account.username},\nYour account has been deleted. Contact your manager or administrator if there is a mistake.`, 'Your account is deleted');
         }
 
         res.status(200).send({

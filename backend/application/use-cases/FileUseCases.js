@@ -2,6 +2,10 @@
 
 const File = require('../../domain/models/File');
 
+async function GetFilesByContribution(contributionId, {fileRepository}) {
+    return fileRepository.getByContribution(contributionId);
+}
+
 async function UploadFiles(files, contribution, { contributionRepository, fileSystem, fileRepository }) {
     try {
         //#region Pre-conditions
@@ -69,5 +73,6 @@ async function DeleteFile(fileId, { fileSystem, fileRepository }) {
 module.exports = {
     UploadFiles,
     DownloadFile,
-    DeleteFile
+    DeleteFile,
+    GetFilesByContribution
 }
