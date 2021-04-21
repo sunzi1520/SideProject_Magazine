@@ -6,6 +6,34 @@
 
 # Update
 ---
+## Date: 09 : 00 PM 20 Apr 2021
+1. Add new API:
+**Contribution API**
+- **GET** /contributions/account/:accountId/selected  
+Get selected contributions of a specific account with a given ID  
+
+- **GET** /contributions/faculty/:faculty/selected  
+Get selected contributions of a specific faculty with a give ID  
+
+- **GET** /contributions/selected  
+Get all selected contributions  
+
+- **PUT** /contributions/:contributionId/select  
+Select a specific contribution with a given ID  
+
+- **PUT** /contributions/:contributionId/deselect  
+Deselect a specific contribution with a given ID
+
+2. Fix bugs:
+- Cannot get files when accessing an contribution<br/>
+Cause: The command used for retrieving files has a problem in the syntax but compiled successfully so that it has been missed.<br/>
+Solution: Fix the command.<br/>
+
+- Uploading files to update a contirbution returns the status 500  
+Cause: There was a mistake in coding  
+Solution: Change the status responded by the server  
+Extension: Fix the similar error not explored in deleting a file  
+
 ## Date: 06 : 02 PM 20 Apr 2021
 1. Add new API:
 **Contribution API**<br/>
@@ -361,6 +389,72 @@ Solution: Implement a constraint before carrying out the creating use cases.
 - exitcode: 0 is OK
 - contribution: [id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected]
 - message: String || Object
+
+
+- **GET** /contributions/account/:accountId/selected  
+**Description**: Get selected contributions of a specific account with a given ID  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+
+**Response**  
+- exitcode: 0 is OK  
+- contribution: [id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected]  
+- message: String || Object  
+
+
+- **GET** /contributions/faculty/:faculty/selected  
+Get selected contributions of a specific faculty with a give ID  
+**Description**: Get selected contributions of a specific account with a given ID  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+
+**Response**  
+- exitcode: 0 is OK  
+- contribution: [id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected]  
+- message: String || Object  
+
+- **GET** /contributions/selected  
+Get all selected contributions  
+**Description**: Get selected contributions of a specific account with a given ID  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+
+**Response**  
+- exitcode: 0 is OK  
+- contribution: [id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected]  
+- message: String || Object  
+
+- **PUT** /contributions/:contributionId/select  
+Select a specific contribution with a given ID  
+**Description**: Get selected contributions of a specific account with a given ID  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+
+**Response**  
+- exitcode: 0 is OK  
+- contribution: id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected  
+- message: String || Object  
+
+- **PUT** /contributions/:contributionId/deselect  
+Deselect a specific contribution with a given ID 
+**Description**: Get selected contributions of a specific account with a given ID  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+
+**Response**  
+- exitcode: 0 is OK  
+- contribution: id, title, magazineId, magazineName, magazineYear, contributorId, contributorEmail, *contributorName*, isSelected  
+- message: String || Object  
 
 ## File Routes
 

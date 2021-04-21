@@ -109,8 +109,6 @@ async function GetSelectedContribution({contributionRepository}) {
 
 async function GetSelectedContributionByFaculty(faculty, {contributionRepository}) {
     const contributions = await contributionRepository.getByBeingSelected();
-    console.log(contributions);
-    console.log(faculty)
     let filteredContributions = new Array();
     await contributions.forEach(contribution => {
         if (contribution.contributor.faculty == faculty) filteredContributions.push(contribution);
@@ -126,6 +124,8 @@ async function GetSelectedContributionByAccount(accountId, {contributionReposito
     })
     return filteredContributions
 }
+
+
 
 module.exports = { 
     CreateContribution,
