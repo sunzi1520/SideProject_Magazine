@@ -1,7 +1,7 @@
 'use strict';
 
 //Use cases
-const { CreateMagazine, GetMagazine, DeleteMagazine, ListMagazines, UpdateMagazine } = require('../../application/use-cases/MagazineUseCases');
+const { CreateMagazine, GetMagazine, DeleteMagazine, ListMagazines, UpdateMagazine, DownloadSelectedContributions } = require('../../application/use-cases/MagazineUseCases');
 
 module.exports = {
     async createMagazine(req, res, next) {
@@ -123,7 +123,7 @@ module.exports = {
         let coordinatorList = [];
         if (coordinators) coordinatorList = await Array.from(coordinators);
 
-/*         try { */
+        try {
             //Process
             const magazine = await UpdateMagazine(magazineId, name, manager_id, published_year, closureDate, finalClosureDate, coordinatorList, isLocked, serviceLocator);
             
@@ -134,12 +134,35 @@ module.exports = {
                 message: ''
             })
     
-/*         } catch(err) {
+         } catch(err) {
             res.status(500).send({
                 exitcode: err.code || 500,
                 magazine: {},
                 message: err.message || err || 'Unknown'
             })
-        } */
+        } 
+    },
+
+    async downloadSelectedContributions(req, res, next) {
+        //Context
+        const serviceLocator = req.server.app.serviceLocator;
+
+        //Input
+        const { magazineId } = req.params
+
+        try {
+            //Process
+            const compressedFile = await DownloadSelectedContributions(magazineId, serviceLocator);
+            
+            //output
+            res.status(200).download(compressedFile);
+    
+         } catch(err) {
+            res.status(500).send({
+                exitcode: err.code || 500,
+                magazine: {},
+                message: err.message || err || 'Unknown'
+            })
+        } 
     }
 }

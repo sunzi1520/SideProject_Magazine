@@ -188,6 +188,9 @@ async function listContributions(req, res, next) {
     const serviceLocator = req.server.app.serviceLocator;
 
     //Input
+    console.log('BODY::', req.body);
+    console.log('PARAMS::', req.params);
+    console.log('QUERY::', req.query);
 
     try {
         //Process

@@ -76,5 +76,10 @@ module.exports = {
         } catch(err) {
             throw err
         }
+    },
+
+    DownloadSelectedContributions(magazineId, { fileSystem, contributionRepository }) {
+        const contributionList = await contributionRepository.getWithFilter({magazineId, isSelected: true});
+        return fileSystem.GetCompressedDirectories(magazineId, contributionRepository);
     }
 }

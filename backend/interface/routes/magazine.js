@@ -3,8 +3,9 @@
 const express = require('express'),
       router = express.Router({ mergeParams: true });
 //Controller
-const { getMagazine, createMagazine, deleteMagazine, listMagazines, updateMagazine} = require('../controllers/MagazineController');
+const { getMagazine, createMagazine, deleteMagazine, listMagazines, updateMagazine, downloadSelectedContributions} = require('../controllers/MagazineController');
 
+router.get('/:magazineId/download/selected', downloadSelectedContributions);
 router.get('/', listMagazines);
 router.get('/:magazineId', getMagazine);
 router.post('/', createMagazine);

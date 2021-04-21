@@ -92,6 +92,16 @@ module.exports = class extends ContributionRepository {
         return this.find({});
     }
 
+    async getWithFilter({id, contributorId, magazineId, title, isSelected}) {
+        return this.find({
+            '_id': id,
+            'contributor': contributorId,
+            'magazine': magazineId,
+            'title': title,
+            'isSelected': isSelected
+        })
+    }
+
     async find(query) {
         const mongooseContributions = await MongooseContribution.aggregate([
             {'$match': query},

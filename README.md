@@ -6,6 +6,12 @@
 
 # Update
 ---
+## Date: 09 : 42 PM 21 Apr 2021
+1. Add new API:
+**Magazine API**
+- **GET** /magazine/:magazineId/download/selected
+Download all selected contributions of a specific magazine
+
 ## Date: 09 : 00 PM 20 Apr 2021
 1. Add new API:
 **Contribution API**
@@ -296,6 +302,18 @@ Solution: Implement a constraint before carrying out the creating use cases.
 **Reponse**
 - exitcode: 0 is OK
 - message: String || Object
+
+**GET** /magazines/:magazineId/download/selected<br/>
+**Description**: A user to download selected contributions of a specific magazine<br/>
+**Request**
+1. **Header**
+- x-access-token: String
+2. **Body**
+
+**Reponse**
+*Download*
+
+
 
 ## Contribution Routes
 

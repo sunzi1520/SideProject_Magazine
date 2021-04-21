@@ -1,7 +1,7 @@
 'use strict';
 
 const FS = require('fs');
-const archiver = require('archiver');
+const Archiver = require('./archiver');
 
 const STORAGE_PATH = '/../storage';
 
@@ -10,10 +10,18 @@ function getExtension(filename) {
 }
 
 function getStoragePath(magazine, contribution) {
-    return STORAGE_PATH + '/' + magazine + '/' + contribution+ '/';
+    let path = STORAGE_PATH 
+    if (magazine) path = path + '/' + magazine; 
+    if (contribution) path = path + '/' + contribution
+    path = path + '/';
+    return path;
 }
 
 module.exports = class {
+    constructor(archiver) {
+        this.archiver = archiver;
+    }
+
     GetAbsoluteStoragePath(path) {
         return __dirname + path;
     }
@@ -47,57 +55,17 @@ module.exports = class {
         }
     }
 
-    async ArchiveFolder(magazine, contribution, extension = 'zip', compressionLevel = 9) {
-        const path = getStoragePath(magazine, contribution);
-        return this.ArchiveFolder(path, extension, compressionLevel);
-    }
-
-    async CreateArchivement(path, extension = 'zip', compressionLevel = 9) {
-        const output = fs.createWriteStream(path + '/' + path + '.' + extension);
-        const archive = archiver('zip', {
-            zlib: {level: compressionLevel}
-        });
-
-        // listen for all archive data to be written
-        // 'close' event is fired only when a file descriptor is involved
-        output.on('close', function() {
-          console.log(archive.pointer() + ' total bytes');
-          console.log('archiver has been finalized and the output file descriptor has closed.');
-        });
-        
-        // This event is fired when the data source is drained no matter what was the data source.
-        // It is not part of this library but rather from the NodeJS Stream API.
-        // @see: https://nodejs.org/api/stream.html#stream_event_end
-        output.on('end', function() {
-          console.log('Data has been drained');
-        });
-        
-        // good practice to catch warnings (ie stat failures and other non-blocking errors)
-        archive.on('warning', function(err) {
-          if (err.code === 'ENOENT') {
-            // log warning
-          } else {
-            // throw error
-            throw err;
+    async GetCompressedDirectories(magazine, directoryList, filename = null) {
+        const storagePath = await getStoragePath(magazine, null);
+        try {
+          if (fs.existsSync(storagePath + '/' + (filename || 'magazine.zip'))) {
+            return storagePath + '/' + (filename || 'magazine.zip');
           }
-        });
-
-        // good practice to catch this error explicitly
-        archive.on('error', function(err) {
-          throw err;
-        });
-        
-        // pipe archive data to the file
-        archive.pipe(output);
-
-        return archive;
-    }
-
-    async ArchiveFile(file, archive) {
-        if (!archive) {
-            throw new Error('ERR_ARCHIVE_REQUIRED_TO_ADD');
+        } catch(err) {
+          console.error(err)
         }
-
-        
+        const output = fs.createWriteStream(storagePath + '/' + (filename || 'magazine.zip'));
+        this.archiver.aggregateCompressDirectory(output, directoryList);
+        return storagePath + '/' + (filename || 'magazine.zip');
     }
 }
