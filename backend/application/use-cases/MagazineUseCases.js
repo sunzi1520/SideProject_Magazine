@@ -78,7 +78,7 @@ module.exports = {
         }
     },
 
-    DownloadSelectedContributions(magazineId, { fileSystem, contributionRepository }) {
+    async DownloadSelectedContributions(magazineId, { fileSystem, contributionRepository }) {
         const contributionList = await contributionRepository.getWithFilter({magazineId, isSelected: true});
         return fileSystem.GetCompressedDirectories(magazineId, contributionRepository);
     }
