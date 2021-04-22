@@ -129,6 +129,10 @@ async function ListContributions_UUV(id, title, contributor, magazine, isSelecte
     return contributionRepository.getWithFilter({id, title, contributorId: contributor, magazineId: magazine, isSelected, faculty});
 }
 
+async function GetAnnualReportByFaculty({contributionRepository}) {
+    return contributionRepository.getAnnualReportByFaculty();
+}
+
 module.exports = { 
     CreateContribution,
     ChangeTitle,

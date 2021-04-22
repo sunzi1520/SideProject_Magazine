@@ -3,6 +3,7 @@
 module.exports = class {
 
     constructor(id = null, createdBy, content, contribution, createdAt=null, updatedAt=null) {
+        console.log(id, ' ', createdBy, ' ', content, ' ', contribution, ' ', createdAt, ' ', updatedAt);
         this.id = id;
         this.createdBy = createdBy; //o_Account
         this.content = content;

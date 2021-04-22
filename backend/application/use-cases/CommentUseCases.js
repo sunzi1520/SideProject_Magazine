@@ -9,7 +9,7 @@ module.exports = {
         return commentRepository.persist(comment);
     },
 
-    UpdateComment(commentId, content, {commentRepository}) {
+    async UpdateComment(commentId, content, {commentRepository}) {
         const oldComment = await commentRepository.get(commentId);
         if (!oldComment && !oldComment.id) {
             throw new Error('ERR_COMMENT_NOT_EXISTING');

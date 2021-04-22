@@ -1,6 +1,6 @@
 'use strict';
 
-const { DeleteComment, CreateComment, UpdateComment, GetAllComments, GetComment } = require('../../application/use-cases/CommentUseCases');
+const { DeleteComment, CreateComment, UpdateComment, GetAllComments, GetComment, GetCommentsByContribution } = require('../../application/use-cases/CommentUseCases');
 
 module.exports = {
     async createComment(req, res, next) {
@@ -15,6 +15,7 @@ module.exports = {
             
             //Process
             const comment = await CreateComment(id, contribution, content, serviceLocator);
+            console.log(comment);
 
             //Output
             return res.status(200).send({
@@ -120,7 +121,9 @@ module.exports = {
         try {
             
             //Process
-            const comments = await GetAllComments(contributionId, content, serviceLocator);
+            const comments = await GetAllComments(serviceLocator);
+
+            console.log(comments);
 
             //Output
             return res.status(200).send({

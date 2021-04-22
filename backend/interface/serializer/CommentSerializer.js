@@ -4,7 +4,7 @@ const _serializeSingleComment = (comment) => {
   return {
     'id': comment.id,
     'commenterId': comment.createdBy.id,
-    'commenterName': comment.createdBy.information.fullname,
+    'commenterName': comment.createdBy.fullname,
     'commenterEmail': comment.createdBy.email,
     'contributionId': comment.contribution.id,
     'contributionTitle': comment.contribution.title,
