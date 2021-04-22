@@ -57,9 +57,12 @@ module.exports = class {
     async GetCompressedDirectories(magazine, directoryList, filename = null) {
         let storagePath = __dirname;
         storagePath = storagePath + await getStoragePath(magazine, null);
-        const output = FS.createWriteStream(storagePath + '/' + (filename || 'magazine') + '.' + this.archiver.compressType);
+        const archivePath = storagePath + '/' + (filename || 'magazine') + '.' + this.archiver.compressType;
+        
+        const output = FS.createWriteStream(archivePath);
         directoryList = await directoryList.map(x => {return {'dirname': x, 'dir': storagePath+'/'+x+'/'}});
         await this.archiver.aggregateCompressDirectory(output, directoryList);
-        return storagePath + '/' + (filename || 'magazine.zip');
+        
+        return archivePath;
     }
 }
