@@ -16,6 +16,7 @@ const Archiver = require('../filesystem/archiver');
 const AccountSerializer = require('../../interface/serializer/AccountSerializer');
 const FileSerializer = require('../../interface/serializer/FileSerializer');
 const ContributionSerializer = require('../../interface/serializer/ContributionSerializer');
+const CommentSerializer = require('../../interface/serializer/CommentSerializer');
 
 function buildBeans() {
 
@@ -34,6 +35,7 @@ function buildBeans() {
     accountSerializer: new AccountSerializer(),
     fileSerializer: new FileSerializer(),
     contributionSerializer: new ContributionSerializer(),
+    commentSerializer: new CommentSerializer()
   };
 
   //Repositories

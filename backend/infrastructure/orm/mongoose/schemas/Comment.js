@@ -5,7 +5,6 @@ const commentSchema = new Schema(
   {
     createdBy: { type: Schema.Types.ObjectId, ref: "Account" },
     contribution: {type: Schema.Types.ObjectId, ref: "Contribution"},
-    replyTo: { type: Schema.Types.ObjectId, ref: "Comment" },
     content: {type: String}
   },
   { timestamps: true }

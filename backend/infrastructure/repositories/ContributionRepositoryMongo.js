@@ -82,7 +82,6 @@ module.exports = class extends ContributionRepository {
     async find(query) {
         await Object.keys(query['pre']).forEach(x => query['pre'][x] === undefined && delete query['pre'][x]);
         await Object.keys(query['post']).forEach(x => query['post'][x] === undefined && delete query['post'][x]);
-        console.log(query);
         const mongooseContributions = await MongooseContribution.aggregate([
             {'$match': query['pre']},
             {'$lookup': {

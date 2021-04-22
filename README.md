@@ -6,6 +6,27 @@
 
 # Update
 ---
+## Date: 09 : 08 PM 22 Apr 2021
+1. Add new API:  
+**Comment API**  
+- **GET** /comments/  
+Get all comments.  
+
+- **GET** /comments/:id  
+Get a specific comment.  
+
+- **GET** /comments/contribution/:contributionId  
+Get comments of a specific contribution.  
+
+- **POST** /comments/  
+Post a new comment.  
+
+- **PUT** /comments/:id  
+Update a specific comment  
+
+- **DELETE** /comments/:id  
+Delete a specific comment  
+
 ## Date: 09 : 42 PM 21 Apr 2021
 1. Add new API:
 **Magazine API**
@@ -508,3 +529,82 @@ Deselect a specific contribution with a given ID
 - exitcode
 - contribution: (id, contributionId, contributionTitle, filename, filetype, createdAt)
 - messge
+
+## Comment Routes
+
+**GET** /comments  
+**Description**: A user views all comments in the system  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+
+**Reponse**  
+- exitcode: 0 is OK  
+- comments: [Comment: (id: String, commenterId: String, commenterName: String, commenterEmail: String, contributionId: String, contributionTitle: String, content: String, createdAt: Date, updatedAt:Date)]  
+- message: String || Object  
+
+**GET** /comments/contribution/:contributionId  
+**Description**: A user views comments of a contribution in the system  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+
+**Reponse**  
+- exitcode: 0 is OK  
+- comments: [Comment: (id: String, commenterId: String, commenterName: String, commenterEmail: String, contributionId: String, contributionTitle: String, content: String, createdAt: Date, updatedAt:Date)]  
+- message: String || Object  
+
+**GET** /comments/:id  
+**Description**: A user views a specific comment  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+
+**Reponse**  
+- exitcode: 0 is OK  
+- comments: Comment: (id: String, commenterId: String, commenterName: String, commenterEmail: String, contributionId: String, contributionTitle: String, content: String, createdAt: Date, updatedAt:Date)  
+- message: String || Object   
+
+**POST** /comments  
+**Description**: A user create a specific comment  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+- **contribution: String**
+- **content: String**  
+
+**Reponse**  
+- exitcode: 0 is OK  
+- comments: Comment: (id: String, commenterId: String, commenterName: String, commenterEmail: String, contributionId: String, contributionTitle: String, content: String, createdAt: Date, updatedAt:Date)  
+- message: String || Object  
+
+
+**PUT** /comments/:id  
+**Description**: A user update a specific comment  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+- **content: String**
+
+**Reponse**  
+- exitcode: 0 is OK  
+- comments: Comment: (id: String, commenterId: String, commenterName: String, commenterEmail: String, contributionId: String, contributionTitle: String, content: String, createdAt: Date, updatedAt:Date)  
+- message: String || Object  
+
+
+**DELETE** /comments/:id  
+**Description**: A user delete a specific comment  
+**Request**  
+1. **Header**  
+- x-access-token: String  
+2. **Body**  
+
+**Reponse**  
+- exitcode: 0 is OK   
+- message: String || Object  
+
