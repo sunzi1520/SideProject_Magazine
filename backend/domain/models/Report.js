@@ -7,21 +7,23 @@ module.exports = class {
     }
 
     async AddLabel(label) {
+        if (!label) return false;
         if (await this.labels.find(x => x == label))
-            return;
+            return true;
         this.labels.push(label);
+        return true;
     }
 
     async AddDataset(label, data) {
-        if (!label) return;
+        if (!label) return false;
         console.log(label + ' ' + data);
         const pos = await this.dataset.find(d => d.label == label);
         if (!pos) {
             this.dataset.push({label: label, data: [data]});
         } else {
-            this.dataset[pos].data.push(data);
+            pos.data.push(data);
         }
-        return;
+        return true;
     }
 
     async Normalize() {
