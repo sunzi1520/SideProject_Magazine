@@ -6,6 +6,7 @@ const {
     //Read
     GetContribution, GetContributionByFaculty, ListContributions, ListContributionsByAccount,
     GetSelectedContribution, GetSelectedContributionByFaculty, GetSelectedContributionByAccount,
+    ListContributions_UUV,
     //Update
     ChangeTitle, SelectContribution, DeselectContribution
     //Delete 
@@ -419,6 +420,75 @@ async function getSelectedContributionsByAccount(req, res, next) {
     }
 }
 
+async function listContributions_UltimateUniversalVersion(req, res, next) {
+    //Context
+    const serviceLocator = req.server.app.serviceLocator;
+
+    //Input
+    let id, title, contributor, magazine, isSelected, faculty;
+
+    //Input
+    id = req.params.id || req.body.id;
+    title = req.params.title || req.body.title;
+    contributor = req.params.accountId || req.body.contributor; 
+    magazine = req.params.magazineId || req.body.magazine;
+    isSelected = req.body.isSelected;
+    faculty = req.params.faculty || req.body.faculty;
+
+    //Access control
+    try {   const role = req.payload.role;
+        switch (role) {
+            case "admin": //He can view all contributions
+                break;
+            case "manager": //He can view all selected contributions
+                isSelected = true;
+                break;
+            case "coordinator": //He can view contributions of his faculty
+                if (faculty && faculty != req.payload.faculty)
+                    throw {code: 401, message: 'Unauthorized'};
+                faculty = req.payload.faculty;
+                break;
+            case "student": //He can view his owned contributions
+                if (contributor && contributor != req.payload.id)
+                    throw {code: 401, message: 'Unauthorized'};
+                contributor = req.payload.id;
+                break;
+            case "guest": //He can view selected contribution of his faculty
+                if (faculty && faculty != req.payload.faculty)
+                    throw {code: 401, message: 'Unauthorized'};
+                isSelected = true;
+                faculty = req.payload.faculty;
+            default:
+                throw {code: 401, message: 'Unauthorized'};
+        }
+    } catch(err) {
+        return res.status(401).send({
+            exitcode: err.code || 1,
+            contributions: [],
+            message: err.message || err || 'Unknown'
+        })
+    }
+ 
+    try {
+        //Process
+        const contributions = await ListContributions_UUV(id, title, contributor, magazine, isSelected, faculty, serviceLocator);
+
+        //Output
+        return res.status(200).send({
+            exitcode: 0,
+            contributions: serviceLocator.contributionSerializer.serialize(contributions),
+            message: ''
+        })
+    } catch(err) {
+        return res.status(500).send({
+            exitcode: err.code || 1,
+            contributions: [],
+            message: err.message || err || 'Unknown'
+        })
+    }
+
+}
+
 module.exports = {
     createContribution,
     changeTitle,
@@ -431,5 +501,6 @@ module.exports = {
     deselectContribution,
     getSelectedContributions,
     getSelectedContributionsByFaculty,
-    getSelectedContributionsByAccount
+    getSelectedContributionsByAccount,
+    listContributions_UltimateUniversalVersion
 }

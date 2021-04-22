@@ -125,7 +125,9 @@ async function GetSelectedContributionByAccount(accountId, {contributionReposito
     return filteredContributions
 }
 
-
+async function ListContributions_UUV(id, title, contributor, magazine, isSelected, faculty, {contributionRepository}) {
+    return contributionRepository.getWithFilter({id, title, contributorId: contributor, magazineId: magazine, isSelected, faculty});
+}
 
 module.exports = { 
     CreateContribution,
@@ -138,5 +140,6 @@ module.exports = {
     DeselectContribution,
     GetSelectedContribution,
     GetSelectedContributionByFaculty,
-    GetSelectedContributionByAccount
+    GetSelectedContributionByAccount,
+    ListContributions_UUV
 }

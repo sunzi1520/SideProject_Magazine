@@ -28,7 +28,9 @@ module.exports = class extends ContributionRepository {
         const mongooseContribution = await MongooseContribution.findByIdAndUpdate(id, {contributor, magazine, title, isSelected}, {new: true});
         await mongooseContribution.populate('contributor', '_id email information.fullname').execPopulate();
         await mongooseContribution.populate('magazine', '_id name published_year closureDate finalClosureDate').execPopulate();
-        return new Contribution(mongooseContribution.id, mongooseContribution.contributor, mongooseContribution.magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
+        const newContributor = new Account(mongooseContribution.contributor._id.toString(), mongooseContribution.contributor.email, mongooseContribution.contributor.password, mongooseContribution.contributor.role, mongooseContribution.contributor.faculty, mongooseContribution.contributor.information.fullname, mongooseContribution.contributor.gender, mongooseContribution.contributor.dob, mongooseContribution.contributor.phone, mongooseContribution.contributor.createdAt, mongooseContribution.contributor.updatedAt);
+        const newMagazine = new Magazine(mongooseContribution.magazine._id.toString(), mongooseContribution.magazine.manager, mongooseContribution.magazine.name, mongooseContribution.magazine.closureDate, mongooseContribution.magazine.finalClosureDate, mongooseContribution.magazine.coordinators, mongooseContribution.magazine.published_year, mongooseContribution.magazine.isLocked, mongooseContribution.magazine.createdAt, mongooseContribution.magazine.updatedAt);
+        return new Contribution(mongooseContribution.id, newContributor, newMagazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
     }
 
     async remove(contributionId) {
@@ -92,20 +94,23 @@ module.exports = class extends ContributionRepository {
         return this.find({});
     }
 
-    async getWithFilter({id, contributorId, magazineId, title, isSelected}) {
-        return this.find({
+    async getWithFilter({id, contributorId, magazineId, title, isSelected, faculty}) {
+        return this.find({'pre': {
             '_id': id && mongoose.Types.ObjectId(id),
             'contributor': contributorId && mongoose.Types.ObjectId(contributorId),
             'magazine': magazineId && mongoose.Types.ObjectId(magazineId),
             'title': title,
             'isSelected': isSelected
-        })
+        }, 
+        'post': {'contributor.faculty': faculty}})
     }
 
     async find(query) {
-        await Object.keys(query).forEach(x => query[x] === undefined && delete query[x]);
+        await Object.keys(query['pre']).forEach(x => query['pre'][x] === undefined && delete query['pre'][x]);
+        await Object.keys(query['post']).forEach(x => query['post'][x] === undefined && delete query['post'][x]);
+        console.log(query);
         const mongooseContributions = await MongooseContribution.aggregate([
-            {'$match': query},
+            {'$match': query['pre']},
             {'$lookup': {
                 'from': 'Accounts',
                 'let': {'contributor_id': '$contributor'},
@@ -130,7 +135,8 @@ module.exports = class extends ContributionRepository {
                 'path': '$magazine',
                 'preserveNullAndEmptyArrays': true
             }},
-        ]).exec()
+            {'$match': query['post']}
+        ]).exec();
         return mongooseContributions.map((mongooseContribution) => {
             const contributor = new Account(mongooseContribution.contributor._id.toString(), mongooseContribution.contributor.email, mongooseContribution.contributor.password, mongooseContribution.contributor.role, mongooseContribution.contributor.faculty, mongooseContribution.contributor.information.fullname, mongooseContribution.contributor.gender, mongooseContribution.contributor.dob, mongooseContribution.contributor.phone, mongooseContribution.contributor.createdAt, mongooseContribution.contributor.updatedAt);
             const magazine = new Magazine(mongooseContribution.magazine._id.toString(), mongooseContribution.magazine.manager, mongooseContribution.magazine.name, mongooseContribution.magazine.closureDate, mongooseContribution.magazine.finalClosureDate, mongooseContribution.magazine.coordinators, mongooseContribution.magazine.published_year, mongooseContribution.magazine.isLocked, mongooseContribution.magazine.createdAt, mongooseContribution.magazine.updatedAt);

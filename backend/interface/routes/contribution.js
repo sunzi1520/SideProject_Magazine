@@ -3,8 +3,9 @@
 const express = require('express'),
       router = express.Router({ mergeParams: true });
 //Controller
-const { changeTitle, createContribution, getContribution, getContributionByFaculty, listContributions, listContributionsByAccount, listContributionsBySelf, selectContribution, deselectContribution, getSelectedContributions, getSelectedContributionsByFaculty, getSelectedContributionsByAccount } = require('../controllers/ContributionController');
+const { changeTitle, createContribution, getContribution, getContributionByFaculty, listContributions, listContributionsByAccount, listContributionsBySelf, selectContribution, deselectContribution, getSelectedContributions, getSelectedContributionsByFaculty, getSelectedContributionsByAccount, listContributions_UltimateUniversalVersion } = require('../controllers/ContributionController');
 
+router.get('/magazine/:magazineId', listContributions_UltimateUniversalVersion);
 router.get('/selected', getSelectedContributions);
 router.get('/faculty/:faculty/selected', getSelectedContributionsByFaculty);
 router.get('/faculty/:faculty', getContributionByFaculty);
@@ -12,7 +13,7 @@ router.get('/account/:accountId/selected', getSelectedContributionsByAccount);
 router.get('/account/:accountId', listContributionsByAccount);
 router.get('/account/', listContributionsBySelf);
 router.get('/:id', getContribution);
-router.get('/', listContributions);
+router.get('/', listContributions_UltimateUniversalVersion);
 
 router.post('/', createContribution);
 
