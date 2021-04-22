@@ -1,7 +1,11 @@
 'use strict';
 
 const Report = require('../../domain/models/Report');
+const Account = require('../../domain/models/Account');
+const Magazine = require('../../domain/models/Magazine');
+const Contribution = require('../../domain/models/Contribution');
 const MongooseMagazine = require('../orm/mongoose/schemas/Magazine');
+const MongooseContribution = require('../orm/mongoose/schemas/Contribution');
 
 module.exports = class {
     
@@ -272,4 +276,120 @@ module.exports = class {
       return reportForm;
     }
 
+    async getCommentReport(year= undefined, faculty = undefined, outOf14 = undefined) {
+      let query = {'contributor.faculty': faculty, 'magazine.published_year': year && parseInt(year)};
+      let spQuery = {'$match': {}};
+      if (outOf14) spQuery['$match'] = {
+        '$expr': {
+          '$lt': [
+            '$createdAt', {
+              '$subtract': [
+                '$oldest.oldest', 1000 * 60 * 60 * 24 * 14
+              ]
+            }
+          ]
+        } 
+      };
+      await Object.keys(query).forEach(k => query[k] === undefined && delete query[k]);
+      const mongooseReport = await MongooseContribution.aggregate([
+        {
+          '$lookup': {
+            'from': 'Accounts', 
+            'localField': 'contributor', 
+            'foreignField': '_id', 
+            'as': 'contributor'
+          }
+        }, {
+          '$unwind': {
+            'path': '$contributor'
+          }
+        }, {
+          '$lookup': {
+            'from': 'Magazines', 
+            'localField': 'magazine', 
+            'foreignField': '_id', 
+            'as': 'magazine'
+          }
+        }, {
+          '$unwind': {
+            'path': '$magazine'
+          }
+        }, {
+          '$lookup': {
+            'from': 'Comments', 
+            'let': {
+              'contribution': '$_id'
+            }, 
+            'pipeline': [
+              {
+                '$match': {
+                  '$expr': {
+                    '$eq': [
+                      '$contribution', '$$contribution'
+                    ]
+                  }
+                }
+              }, {
+                '$lookup': {
+                  'from': 'Accounts', 
+                  'localField': 'createdBy', 
+                  'foreignField': '_id', 
+                  'as': 'createdBy'
+                }
+              }, {
+                '$unwind': '$createdBy'
+              }, {
+                '$group': {
+                  '_id': '$createdBy.role', 
+                  'oldest': {
+                    '$min': '$createdAt'
+                  }
+                }
+              }, {
+                '$match': {
+                  '$expr': {
+                    '$in': [
+                      '$_id', [
+                        'coordinator', 'manager', 'admin'
+                      ]
+                    ]
+                  }
+                }
+              }, {
+                '$sort': {
+                  'oldest': 1
+                }
+              }
+            ], 
+            'as': 'comments'
+          }
+        }, {
+          '$addFields': {
+            'numOfComments': {
+              '$size': '$comments'
+            }, 
+            'oldest': {
+              '$arrayElemAt': [
+                '$comments', 0
+              ]
+            }
+          }
+        }, {
+          '$match': {
+            '$expr': {
+              '$eq': [
+                '$numOfComments', 0
+              ]
+            }
+          }
+        }, {
+          '$match': query
+        }, spQuery
+      ]).exec();
+      return mongooseReport.map((mongooseContribution) => {
+          const contributor = new Account(mongooseContribution.contributor._id.toString(), mongooseContribution.contributor.email, mongooseContribution.contributor.password, mongooseContribution.contributor.role, mongooseContribution.contributor.faculty, mongooseContribution.contributor.information.fullname, mongooseContribution.contributor.gender, mongooseContribution.contributor.dob, mongooseContribution.contributor.phone, mongooseContribution.contributor.createdAt, mongooseContribution.contributor.updatedAt);
+          const magazine = new Magazine(mongooseContribution.magazine._id.toString(), mongooseContribution.magazine.manager, mongooseContribution.magazine.name, mongooseContribution.magazine.closureDate, mongooseContribution.magazine.finalClosureDate, mongooseContribution.magazine.coordinators, mongooseContribution.magazine.published_year, mongooseContribution.magazine.isLocked, mongooseContribution.magazine.createdAt, mongooseContribution.magazine.updatedAt);
+          return new Contribution(mongooseContribution._id, contributor, magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
+      });
+    }
 }
