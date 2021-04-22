@@ -53,41 +53,15 @@ module.exports = class extends ContributionRepository {
     }
 
     async getByFaculty(contributorFaculty) {
-        const mongooseContributions = await MongooseContribution.aggregate([
-            {'$lookup': {
-                'from': 'Accounts',
-                'localField': 'contributor',
-                'foreignField': '_id',
-                'as': 'contributor'
-            }},
-            {'$unwind': {
-                'path': '$contributor',
-                'preserveNullAndEmptyArrays': true
-            }},
-            {'$lookup': {
-                'from': 'Magazines',
-                'localField': 'magazine',
-                'foreignField': '_id',
-                'as': 'magazine'
-            }},
-            {'$unwind': {'path': '$magazine', 'preserveNullAndEmptyArrays': true}},
-            {'$match': {$expr: {$eq: [contributorFaculty, '$contributor.faculty']}}}
-        ]).exec();
-        
-        return mongooseContributions.map((mongooseContribution) => {
-            const contributor = new Account(mongooseContribution.contributor._id.toString(), mongooseContribution.contributor.email, mongooseContribution.contributor.password, mongooseContribution.contributor.role, mongooseContribution.contributor.faculty, mongooseContribution.contributor.information.fullname, mongooseContribution.contributor.gender, mongooseContribution.contributor.dob, mongooseContribution.contributor.phone, mongooseContribution.contributor.createdAt, mongooseContribution.contributor.updatedAt);
-            const magazine = new Magazine(mongooseContribution.magazine._id.toString(), mongooseContribution.magazine.manager, mongooseContribution.magazine.name, mongooseContribution.magazine.closureDate, mongooseContribution.magazine.finalClosureDate, mongooseContribution.magazine.coordinators, mongooseContribution.magazine.published_year, mongooseContribution.magazine.isLocked, mongooseContribution.magazine.createdAt, mongooseContribution.magazine.updatedAt);
-            return new Contribution(mongooseContribution._id, contributor, magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
-        });
-        
+        return this.getWithFilter({'contributor.faculty': contributorFaculty});       
     }
 
     async getByAccount(accountId) {
-        return this.find({'contributor': mongoose.Types.ObjectId(accountId)});
+        return this.getWithFilter({'contributorId': mongoose.Types.ObjectId(accountId)});
     }
 
     async getByBeingSelected() {
-        return this.find({'isSelected': true});
+        return this.getWithFilter({'isSelected': true});
     }
 
     async getAll() {

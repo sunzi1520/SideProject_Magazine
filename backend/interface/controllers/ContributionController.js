@@ -340,6 +340,7 @@ async function getSelectedContributions(req, res, next) {
     try {
         //Process
         let contributions = await GetSelectedContribution(serviceLocator);
+        console.log(contributionns);
 
         if (contributions && contributions.length > 0) {
             contributions = await serviceLocator.contributionSerializer.serialize(contributions);
