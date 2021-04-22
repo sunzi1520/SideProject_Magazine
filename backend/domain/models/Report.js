@@ -27,12 +27,13 @@ module.exports = class {
     }
 
     async Normalize() {
-        const numOfColumn = this.labels;
-        await this.dataset.forEach(d => {
-            if (d.data.length < numOfColumn) {
+        const numOfColumn = this.labels.length;
+        console.log(numOfColumn + ' ' + this.labels);
+        return this.dataset.forEach(d => {
+            console.log('While Loop::' + d.data.length + ' ' + numOfColumn);
+            while (d.data.length < numOfColumn) {
                 d.data.push(0);
             }
         })
-        return;
     }
 }
