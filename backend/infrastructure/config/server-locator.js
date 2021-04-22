@@ -48,6 +48,7 @@ function buildBeans() {
     const ContributionRepositoryMongo = require('../repositories/ContributionRepositoryMongo');
     const FileRepositoryMongo = require('../repositories/FileRepositoryMongo');
     const MessageRepositoryMongo = require('../repositories/MessageRepositoryMongo');
+    const ReportRepositoryMongo = require('../repositories/ReportRepositoryMongo');
 
     beans.accountRepository = new AccountRepositoryMongo();
     beans.magazineRepository = new MagazineRepositoryMongo();
@@ -55,6 +56,7 @@ function buildBeans() {
     beans.contributionRepository = new ContributionRepositoryMongo();
     beans.fileRepository = new FileRepositoryMongo();
     beans.messageRepository = new MessageRepositoryMongo();
+    beans.reportRepository = new ReportRepositoryMongo();
   } else {
     throw new Error('Add SQL support');
   }

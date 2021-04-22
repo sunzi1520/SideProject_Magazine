@@ -116,48 +116,4 @@ module.exports = class extends ContributionRepository {
             return new Contribution(mongooseContribution._id, contributor, magazine, mongooseContribution.title, mongooseContribution.isSelected, mongooseContribution.createdAt, mongooseContribution.updateAt);
         });
     }
-
-    async getAnnualReportByFaculty() {
-        const mongooseReport = await MongooseContribution.aggregate([
-            {'$lookup': {
-                'from': 'Accounts',
-                'localField': 'contributor',
-                'foreignField': '_id',
-                'as': 'contributor'
-            }},
-            {'$unwind': {
-                'path': '$contributor',
-                'preserveNullAndEmptyArrays': true
-            }},
-            {'$lookup': {
-                'from': 'Magazines',
-                'localField': 'magazine',
-                'foreignField': '_id',
-                'as': 'magazine'
-            }},
-            {'$unwind': {
-                'path': '$magazine',
-                'preserveNullAndEmptyArrays': true
-            }},
-            {'$group': {
-                '_id': {
-                    'year': '$magazine.published_year',
-                    'faculty': '$contributor.faculty'
-                },
-                'numOfContributions': {'$sum': 1}
-            }},
-            {'$group': {
-                '_id': '$_id.year',
-                'statistic': {
-                    '$push': {
-                        'faculty': '$_id.faculty',
-                        'numOfContributions': '$numOfContributions'
-                    }
-                },
-                'total': {'$sum': 1}
-            }},
-            {'$sort': {'_id': 1}},
-        ]).exec();
-    }
-
 }

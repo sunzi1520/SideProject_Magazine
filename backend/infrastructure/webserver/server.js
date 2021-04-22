@@ -40,6 +40,7 @@ const createServer = () => {
     app.use('/contributions', AuthorizationController.verifyAccessToken, require('../../interface/routes/contribution'));
     app.use('/comments', AuthorizationController.verifyAccessToken, require('../../interface/routes/comment'));
     app.use('/files', require('../../interface/routes/file'));
+    app.use('/report', require('../../interface/routes/report'));
 
     app.use(function(req, res, next) {
         res.status(404).end();
