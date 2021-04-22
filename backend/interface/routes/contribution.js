@@ -5,6 +5,7 @@ const express = require('express'),
 //Controller
 const { changeTitle, createContribution, getContribution, getContributionByFaculty, listContributions, listContributionsByAccount, listContributionsBySelf, selectContribution, deselectContribution, getSelectedContributions, getSelectedContributionsByFaculty, getSelectedContributionsByAccount, listContributions_UltimateUniversalVersion } = require('../controllers/ContributionController');
 
+router.get('/magazine/:magazineId/selected/:isSelected', listContributions_UltimateUniversalVersion);
 router.get('/magazine/:magazineId', listContributions_UltimateUniversalVersion);
 router.get('/selected', getSelectedContributions);
 router.get('/faculty/:faculty/selected', getSelectedContributionsByFaculty);

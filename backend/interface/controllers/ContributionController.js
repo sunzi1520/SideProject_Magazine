@@ -429,12 +429,12 @@ async function listContributions_UltimateUniversalVersion(req, res, next) {
     let id, title, contributor, magazine, isSelected, faculty;
 
     //Input
-    id = req.params.id || req.body.id;
-    title = req.params.title || req.body.title;
-    contributor = req.params.accountId || req.body.contributor; 
-    magazine = req.params.magazineId || req.body.magazine;
-    isSelected = req.body.isSelected;
-    faculty = req.params.faculty || req.body.faculty;
+    id = req.params.id || req.query.id || req.body.id;
+    title = req.params.title || req.query.id || req.body.title;
+    contributor = req.params.accountId || req.query.id || req.body.contributor; 
+    magazine = req.params.magazineId || req.query.id || req.body.magazine;
+    isSelected = req.params.isSelected || req.query.isSelected || req.body.isSelected;
+    faculty = req.params.faculty || req.query.id || req.body.faculty;
 
     //Access control
     try {   const role = req.payload.role;
@@ -459,6 +459,7 @@ async function listContributions_UltimateUniversalVersion(req, res, next) {
                     throw {code: 401, message: 'Unauthorized'};
                 isSelected = true;
                 faculty = req.payload.faculty;
+                break;
             default:
                 throw {code: 401, message: 'Unauthorized'};
         }
