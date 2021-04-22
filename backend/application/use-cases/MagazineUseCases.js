@@ -78,14 +78,11 @@ module.exports = {
         }
     },
 
-    async DownloadSelectedContributions(magazineId, { fileSystem, magazineRepository, contributionRepository }) {
+    async DownloadSelectedContributions(magazineId, { fileSystem, magazineRepository, contributionRepository }, callback) {
         const magazine = await magazineRepository.get(magazineId);
-        console.log(magazine);
         let name = magazine.name.split(' ').join('-');
-        console.log(name);
         let contributionList = await contributionRepository.getWithFilter({magazineId, isSelected: true});
         contributionList = await contributionList.map(contribution => contribution.id.toString());
-        console.log('MagazineUseCases::DownloadSelectedContributions::', contributionList);
-        return fileSystem.GetCompressedDirectories(magazineId, contributionList, name);
+        return fileSystem.GetCompressedDirectories(magazineId, contributionList, name, callback);
     }
 }

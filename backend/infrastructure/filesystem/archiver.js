@@ -38,20 +38,24 @@ module.exports = class {
         return true;
     }
 
-    async aggregateCompressDirectory(output, data) {
-        this.targetDestination(output);
+    async aggregateCompressDirectory(output, data, callback) {
+        this.targetDestination(output, callback);
         await this.appendDirectory(data);
-        this.finalize();
+        await this.finalize();
+        console.log('aggregateCompressDirectory::pointer::' + this.archive.pointer() + ' total bytes' )
         return true;
     }
 
-    targetDestination(output) {
+    targetDestination(output, callback) {
         // listen for all archive data to be written
         // 'close' event is fired only when a file descriptor is involved
         var tmpArchive = this.archive;
+        this.output = output;
+        console.log('targetDestination::output::', output);
         output.on('close', function() {
             console.log(tmpArchive.pointer() + ' total bytes');
             console.log('archiver has been finalized and the output file descriptor has closed.');
+            callback(output.path);
         });
         
         // This event is fired when the data source is drained no matter what was the data source.
@@ -77,14 +81,14 @@ module.exports = class {
     appendDirectory(data){
         if (Array.isArray(data)) {
             return data.forEach(file => {
+                console.log(file);
                 this.archive.directory(file.dir, file.dirname)
             })
         }
         return this.archive.directory(data.dir, data.dirname);
     }
 
-    finalize(){
-        this.archive.finalize();
-        return true;
+    async finalize(){
+        return this.archive.finalize();
     }
 }

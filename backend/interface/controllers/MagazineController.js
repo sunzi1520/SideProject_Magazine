@@ -152,11 +152,10 @@ module.exports = {
 
         try {
             //Process
-            const compressedFile = await DownloadSelectedContributions(magazineId, serviceLocator);
+            DownloadSelectedContributions(magazineId, serviceLocator, (path) => {
+                res.status(200).download(path);
+            });
             
-            //output
-            res.status(200).download(compressedFile);
-    
          } catch(err) {
             res.status(500).send({
                 exitcode: err.code || 500,
