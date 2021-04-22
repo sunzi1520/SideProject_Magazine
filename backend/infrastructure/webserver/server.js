@@ -36,7 +36,7 @@ const createServer = () => {
 
     app.use('/auth', require('../../interface/routes/auth'));
     app.use('/accounts', AuthorizationController.verifyAccessToken, require('../../interface/routes/account'));
-    app.use('/magazines', AuthorizationController.verifyAccessToken, require('../../interface/routes/magazine'));
+    app.use('/magazines', require('../../interface/routes/magazine'));
     app.use('/contributions', AuthorizationController.verifyAccessToken, require('../../interface/routes/contribution'));
     app.use('/comments', AuthorizationController.verifyAccessToken, require('../../interface/routes/comment'));
     app.use('/files', require('../../interface/routes/file'));

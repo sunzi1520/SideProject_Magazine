@@ -155,8 +155,7 @@ module.exports = {
             const compressedFile = await DownloadSelectedContributions(magazineId, serviceLocator);
             
             //output
-            console.log(compressedFile);
-            res.status(200).end();
+            res.status(200).download(compressedFile);
     
          } catch(err) {
             res.status(500).send({
