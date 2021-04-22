@@ -1,7 +1,6 @@
 'use strict';
 
 const FS = require('fs');
-const Archiver = require('./archiver');
 
 const STORAGE_PATH = '/../storage';
 
@@ -56,16 +55,11 @@ module.exports = class {
     }
 
     async GetCompressedDirectories(magazine, directoryList, filename = null) {
-        const storagePath = await getStoragePath(magazine, null);
-        try {
-          if (fs.existsSync(storagePath + '/' + (filename || 'magazine.zip'))) {
-            return storagePath + '/' + (filename || 'magazine.zip');
-          }
-        } catch(err) {
-          console.error(err)
-        }
-        const output = fs.createWriteStream(storagePath + '/' + (filename || 'magazine.zip'));
-        this.archiver.aggregateCompressDirectory(output, directoryList);
+        let storagePath = __dirname;
+        storagePath = storagePath + await getStoragePath(magazine, null);
+        const output = FS.createWriteStream(storagePath + '/' + (filename || 'magazine') + '.' + this.archiver.compressType);
+        directoryList = await directoryList.map(x => {return {'dirname': x, 'dir': storagePath+'/'+x+'/'}});
+        await this.archiver.aggregateCompressDirectory(output, directoryList);
         return storagePath + '/' + (filename || 'magazine.zip');
     }
 }

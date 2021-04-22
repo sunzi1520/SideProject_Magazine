@@ -94,15 +94,17 @@ module.exports = class extends ContributionRepository {
 
     async getWithFilter({id, contributorId, magazineId, title, isSelected}) {
         return this.find({
-            '_id': id,
-            'contributor': contributorId,
-            'magazine': magazineId,
+            '_id': id && mongoose.Types.ObjectId(id),
+            'contributor': contributorId && mongoose.Types.ObjectId(contributorId),
+            'magazine': magazineId && mongoose.Types.ObjectId(magazineId),
             'title': title,
             'isSelected': isSelected
         })
     }
 
     async find(query) {
+        await Object.keys(query).forEach(x => query[x] === undefined && delete query[x]);
+        console.log('ContributionRepositoryMongo::find::', query);
         const mongooseContributions = await MongooseContribution.aggregate([
             {'$match': query},
             {'$lookup': {

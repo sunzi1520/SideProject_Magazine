@@ -5,11 +5,10 @@ const archiver = require('archiver');
 module.exports = class {
 
     constructor(compressionFile, compressionLevel) {
+        this.compressType = compressionFile;
         let options = {};
         if (compressionFile == 'zip') {
-            options.zlib = compressionLevel;
-        } else if (compressionFile == 'tar') {
-            options.gzipOptions = compressionLevel
+            options.zlib = { 'level': compressionLevel };
         } else {
             throw new Error('ERR_COMPRESSION_TYPE_NOT_SUPPORTED');
         }
@@ -49,8 +48,9 @@ module.exports = class {
     targetDestination(output) {
         // listen for all archive data to be written
         // 'close' event is fired only when a file descriptor is involved
+        var tmpArchive = this.archive;
         output.on('close', function() {
-            console.log(archive.pointer() + ' total bytes');
+            console.log(tmpArchive.pointer() + ' total bytes');
             console.log('archiver has been finalized and the output file descriptor has closed.');
         });
         
@@ -77,10 +77,10 @@ module.exports = class {
     appendDirectory(data){
         if (Array.isArray(data)) {
             return data.forEach(file => {
-                this.archive.directory(file, false)
+                this.archive.directory(file.dir, file.dirname)
             })
         }
-        return this.archive.directory(data, false);
+        return this.archive.directory(data.dir, data.dirname);
     }
 
     finalize(){

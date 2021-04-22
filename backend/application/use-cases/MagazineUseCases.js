@@ -70,7 +70,7 @@ module.exports = {
             //#region Flow
                 const newMagazine = new Magazine(null, manager, name, closureDate, finalClosureDate, coordinatorList, published_year, isLocked)
                 oldMagazine.merge(newMagazine);
-                
+                console.log(oldMagazine);
                 return magazineRepository.merge(oldMagazine);
             //#endregion
         } catch(err) {
@@ -78,8 +78,14 @@ module.exports = {
         }
     },
 
-    async DownloadSelectedContributions(magazineId, { fileSystem, contributionRepository }) {
-        const contributionList = await contributionRepository.getWithFilter({magazineId, isSelected: true});
-        return fileSystem.GetCompressedDirectories(magazineId, contributionRepository);
+    async DownloadSelectedContributions(magazineId, { fileSystem, magazineRepository, contributionRepository }) {
+        const magazine = await magazineRepository.get(magazineId);
+        console.log(magazine);
+        let name = magazine.name.split(' ').join('-');
+        console.log(name);
+        let contributionList = await contributionRepository.getWithFilter({magazineId, isSelected: true});
+        contributionList = await contributionList.map(contribution => contribution.id.toString());
+        console.log('MagazineUseCases::DownloadSelectedContributions::', contributionList);
+        return fileSystem.GetCompressedDirectories(magazineId, contributionList, name);
     }
 }

@@ -11,6 +11,7 @@ const JwtAccessTokenManager = require('../security/jwtAccessTokenManager');
 const NodemailerMailer = require('../notification/NodemailerMailer');
 //// File System
 const FileSystem = require('../filesystem/file-system');
+const Archiver = require('../filesystem/archiver');
 //// Serializer
 const AccountSerializer = require('../../interface/serializer/AccountSerializer');
 const FileSerializer = require('../../interface/serializer/FileSerializer');
@@ -27,7 +28,7 @@ function buildBeans() {
     mailer: new NodemailerMailer(),
 
     //File System
-    fileSystem: new FileSystem(),
+    fileSystem: new FileSystem(new Archiver('zip', 9)),
 
     //Serializers
     accountSerializer: new AccountSerializer(),
