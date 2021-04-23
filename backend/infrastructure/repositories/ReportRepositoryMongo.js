@@ -9,7 +9,9 @@ const MongooseContribution = require('../orm/mongoose/schemas/Contribution');
 
 module.exports = class {
     
-    async GetReport1() {
+    async GetReport1(year = undefined) {
+      let query = {'_id': year && parseInt(year)};
+      await Object.keys(query).forEach(k => query[k] === undefined && delete query[k]);
         const mongooseReport = await MongooseMagazine.aggregate([
             {
               '$lookup': {
@@ -74,6 +76,10 @@ module.exports = class {
                 }
               }
             },
+            {
+              '$match': query
+            }
+            ,
             {
               '$sort': {
                 '_id': -1

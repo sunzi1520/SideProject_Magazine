@@ -1,7 +1,7 @@
 'use strict';
 
-function GetReport1({reportRepository}) {
-    return reportRepository.GetReport1();
+function GetReport1(year, {reportRepository}) {
+    return reportRepository.GetReport1(year);
 }
 
 function GetReport2(publised_year, {reportRepository}) {

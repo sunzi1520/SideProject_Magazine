@@ -7,9 +7,10 @@ async function getReport1(req, res, next) {
     const serviceLocator = req.server.app.serviceLocator;
 
     //Input
+    const {year} = req.params;
 
     try {
-        const reportData = await GetReport1(serviceLocator);
+        const reportData = await GetReport1(year, serviceLocator);
 
         console.log(reportData);
         return res.status(200).send(reportData);
