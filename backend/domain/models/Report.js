@@ -3,7 +3,7 @@
 module.exports = class {
     constructor() {
         this.labels = [];
-        this.dataset = [];
+        this.datasets = [];
     }
 
     async AddLabel(label) {
@@ -17,9 +17,9 @@ module.exports = class {
     async AddDataset(label, data) {
         if (!label) return false;
         console.log(label + ' ' + data);
-        const pos = await this.dataset.find(d => d.label == label);
+        const pos = await this.datasets.find(d => d.label == label);
         if (!pos) {
-            this.dataset.push({label: label, data: [data]});
+            this.datasets.push({label: label, data: [data]});
         } else {
             pos.data.push(data);
         }
@@ -29,7 +29,7 @@ module.exports = class {
     async Normalize() {
         const numOfColumn = this.labels.length;
         console.log(numOfColumn + ' ' + this.labels);
-        return this.dataset.forEach(d => {
+        return this.datasets.forEach(d => {
             console.log('While Loop::' + d.data.length + ' ' + numOfColumn);
             while (d.data.length < numOfColumn) {
                 d.data.push(0);

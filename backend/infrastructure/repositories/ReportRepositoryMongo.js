@@ -93,11 +93,13 @@ module.exports = class {
     }
 
     async GetReport2(year) {
+      const query = {
+        'published_year': year && parseInt(year)
+      }
+      await Object.keys(query).forEach(k => query[k] === undefined && delete query[k]);
       const mongooseReport = await MongooseMagazine.aggregate([
         {
-          '$match': {
-            'published_year': parseInt(year)
-          }
+          '$match': query
         }, {
           '$lookup': {
             'from': 'Contributions', 
@@ -178,7 +180,7 @@ module.exports = class {
     }
 
     async GetReport3(year = undefined) {
-      let query = {'_id': parseInt(year)};
+      let query = {'_id': year && parseInt(year)};
       await Object.keys(query).forEach(k => query[k] === undefined && delete query[k]);
       const mongooseReport = await MongooseMagazine.aggregate([
         {
