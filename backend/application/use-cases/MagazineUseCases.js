@@ -3,7 +3,7 @@
 const Magazine = require('../../domain/models/Magazine');
 
 module.exports = {
-    async CreateMagazine(name, manager_id, published_year, closureDate, finalClosureDate, coordinators, isLocked, {accountRepository, magazineRepository}) {
+    async CreateMagazine(name, manager_id, published_year, closureDate, finalClosureDate, coordinators, {accountRepository, magazineRepository}) {
         //#region Pre-condition
             
             //Check if the manager exists
@@ -24,7 +24,7 @@ module.exports = {
         //#endregion
 
         //#region Flow
-            const magazine = new Magazine(null, manager, name, closureDate, finalClosureDate, coordinatorList, published_year, isLocked)
+            const magazine = new Magazine(null, manager, name, closureDate, finalClosureDate, coordinatorList, published_year)
             return magazineRepository.persist(magazine);
         //#endregion
     },   
@@ -41,7 +41,7 @@ module.exports = {
         return magazineRepository.find();
     },
 
-    async UpdateMagazine(magazineId, name, manager_id, published_year, closureDate, finalClosureDate, coordinators, isLocked, {accountRepository, magazineRepository}) {
+    async UpdateMagazine(magazineId, name, manager_id, published_year, closureDate, finalClosureDate, coordinators, {accountRepository, magazineRepository}) {
         try {       
             //#region Pre-condition
                 //Check if the magazine exists
@@ -68,7 +68,7 @@ module.exports = {
             //#endregion
 
             //#region Flow
-                const newMagazine = new Magazine(null, manager, name, closureDate, finalClosureDate, coordinatorList, published_year, isLocked)
+                const newMagazine = new Magazine(null, manager, name, closureDate, finalClosureDate, coordinatorList, published_year)
                 oldMagazine.merge(newMagazine);
                 console.log(oldMagazine);
                 return magazineRepository.merge(oldMagazine);

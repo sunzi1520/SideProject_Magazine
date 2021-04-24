@@ -65,7 +65,7 @@ async function createContribution(req, res, next) {
 
         ////Send email
         //////Get coordinator list
-/*         const coordinators = await ListAccountsByRole('coordinator', serviceLocator);
+        const coordinators = await ListAccountsByRole('coordinator', serviceLocator);
         if (coordinators){
             let emailList = []
             await coordinators.forEach(coordinator => {
@@ -74,7 +74,7 @@ async function createContribution(req, res, next) {
                 }
             });
             serviceLocator.mailer.sendMail(emailList, `A student in your faculty has uploaded a new contribution named ${contribution.title}. Check it!`, 'New contribution in your faculty');
-        } */
+        }
 
         res.status(200).send({
             exitcode: 0,
@@ -127,7 +127,7 @@ async function getContribution(req, res, next) {
     //Input
     const {id} = req.params;
 
-/*     try { */
+    try {
         //Process
         console.log(id);
         const contribution = await GetContribution(id, serviceLocator);
@@ -148,13 +148,13 @@ async function getContribution(req, res, next) {
             message: ''
         })
 
-/*     } catch(err) {
+    } catch(err) {
         res.status(500).send({
             exitcode: err.code || 1,
             contribution: {},
             message: err.message || err || 'Unknown'
         })
-    } */
+    }
 }
 
 async function getContributionByFaculty(req, res, next) {

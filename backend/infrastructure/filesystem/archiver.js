@@ -50,7 +50,6 @@ module.exports = class {
         // listen for all archive data to be written
         // 'close' event is fired only when a file descriptor is involved
         var tmpArchive = this.archive;
-        this.output = output;
         console.log('targetDestination::output::', output);
         output.on('close', function() {
             console.log(tmpArchive.pointer() + ' total bytes');

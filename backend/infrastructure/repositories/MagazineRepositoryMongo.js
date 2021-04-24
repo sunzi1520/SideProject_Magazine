@@ -9,27 +9,27 @@ module.exports = class extends MagazineRepository {
     async persist(magazineEntity) {
         const manager = magazineEntity.manager.id;
         const coordinators = Array.from(magazineEntity.coordinators, coordinator => coordinator.id);
-        const { name, published_year, closureDate, finalClosureDate, isLocked } = magazineEntity;
-        const mongooseMagazine = new MongooseMagazine({manager, name, published_year, closureDate, finalClosureDate, isLocked, coordinators});
+        const { name, published_year, closureDate, finalClosureDate } = magazineEntity;
+        const mongooseMagazine = new MongooseMagazine({manager, name, published_year, closureDate, finalClosureDate, coordinators});
         await mongooseMagazine.save();
         await mongooseMagazine.populate('manager', '_id email role information.fullname').execPopulate();
         await mongooseMagazine.populate('coordinators', '_id email role faculty information.fullname').execPopulate();
-        return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
+        return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.createdAt);
     }
 
     async merge(magazineEntity) {
         const manager = magazineEntity.manager.id;
         const coordinators = Array.from(magazineEntity.coordinators, coordinator => coordinator.id);
-        const { id, name, published_year, closureDate, finalClosureDate, isLocked } = magazineEntity;
-        const mongooseMagazine = await MongooseMagazine.findByIdAndUpdate(id, {manager, name, published_year, closureDate, finalClosureDate, isLocked, coordinators}, {new: true});
+        const { id, name, published_year, closureDate, finalClosureDate } = magazineEntity;
+        const mongooseMagazine = await MongooseMagazine.findByIdAndUpdate(id, {manager, name, published_year, closureDate, finalClosureDate, coordinators}, {new: true});
         await mongooseMagazine.populate('manager', '_id email role information.fullname').execPopulate();
         await mongooseMagazine.populate('coordinators', '_id email role faculty information.fullname').execPopulate();
-        return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
+        return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.createdAt);
     }
 
     async remove(magazineId) {
         const mongooseMagazine = await MongooseMagazine.findOneAndDelete({_id: magazineId});
-        return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
+        return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.createdAt);
     }
 
     async get(magazineId) {
@@ -38,7 +38,7 @@ module.exports = class extends MagazineRepository {
             await mongooseMagazine.populate('manager', '_id email role information.fullname').execPopulate();
             await mongooseMagazine.populate('coordinators', '_id email role faculty information.fullname').execPopulate();
         }
-        return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
+        return new Magazine(mongooseMagazine.id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.createdAt);
     }
 
     async find() {
@@ -66,7 +66,7 @@ module.exports = class extends MagazineRepository {
         ]).exec();
 
         return mongooseMagazines.map((mongooseMagazine) => {
-            return new Magazine(mongooseMagazine._id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.isLocked, mongooseMagazine.createdAt);
+            return new Magazine(mongooseMagazine._id, mongooseMagazine.manager, mongooseMagazine.name, mongooseMagazine.closureDate, mongooseMagazine.finalClosureDate, mongooseMagazine.coordinators, mongooseMagazine.published_year, mongooseMagazine.createdAt);
         })
     }
 

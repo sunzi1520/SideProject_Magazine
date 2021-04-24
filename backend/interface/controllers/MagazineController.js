@@ -9,13 +9,13 @@ module.exports = {
         const serviceLocator = req.server.app.serviceLocator;
 
         //input
-        const {manager_id, name, published_year, closureDate, finalClosureDate, isLocked, coordinators} = req.body;
+        const {manager_id, name, published_year, closureDate, finalClosureDate, coordinators} = req.body;
         let coordinatorList = [];
         if (coordinators) coordinatorList = await Array.from(coordinators);
 
         //process
         try { 
-            const magazine = await CreateMagazine(name, manager_id, published_year, closureDate, finalClosureDate, coordinatorList, isLocked, serviceLocator);
+            const magazine = await CreateMagazine(name, manager_id, published_year, closureDate, finalClosureDate, coordinatorList, serviceLocator);
             
             //output
             res.status(200).send({
@@ -119,13 +119,13 @@ module.exports = {
 
         //Input
         const { magazineId } = req.params
-        const {manager_id, name, published_year, closureDate, finalClosureDate, isLocked, coordinators} = req.body;
+        const {manager_id, name, published_year, closureDate, finalClosureDate, coordinators} = req.body;
         let coordinatorList = [];
         if (coordinators) coordinatorList = await Array.from(coordinators);
 
         try {
             //Process
-            const magazine = await UpdateMagazine(magazineId, name, manager_id, published_year, closureDate, finalClosureDate, coordinatorList, isLocked, serviceLocator);
+            const magazine = await UpdateMagazine(magazineId, name, manager_id, published_year, closureDate, finalClosureDate, coordinatorList, serviceLocator);
             
             //output
             res.status(200).send({

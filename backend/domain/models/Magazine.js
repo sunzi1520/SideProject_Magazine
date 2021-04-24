@@ -4,7 +4,7 @@ module.exports = class {
 
     constructor(id = null, manager, name, 
                 closureDate, finalClosureDate, coordinators = [],   
-                published_year = (new Date()).getFullYear(), isLocked = false, createdAt=null) {
+                published_year = (new Date()).getFullYear(), createdAt=null) {
         this.id = id;
         this.manager = manager; //o_Manager
         this.name = name;
@@ -17,7 +17,6 @@ module.exports = class {
         if (finalClosureDate) {
                 this.finalClosureDate = (new Date(finalClosureDate));
         }
-        this.isLocked = isLocked;
         this.coordinators = coordinators;
         if (!Array.isArray(coordinators)) //[o_Coordinator]
             if (coordinators) this.coordinators = new Array(coordinators);
