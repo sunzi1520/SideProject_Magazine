@@ -70,6 +70,14 @@ async function uploadFiles(req, res, next) {
     }
     files.push(article);
 
+    if (!files || files.length == 0) {
+        return res.status(200).send({
+            exitcode: 1,
+            files: "",
+            message: "Invalid input"
+        })
+    }
+
     if (!agreement) {
         return res.status(200).send({
             exitcode: 1,
@@ -83,6 +91,22 @@ async function uploadFiles(req, res, next) {
         const uploadedFiles = await UploadFiles(files, contributionId, serviceLocator);
 
         //Output
+
+        ////Send email
+        //////Get coordinator list
+        const contribution = uploadedFiles[0].contribution;
+        const contributorFaculty = req.payload.faculty;
+        const coordinators = await ListAccountsByRole('coordinator', serviceLocator);
+        if (coordinators){
+            let emailList = []
+            await coordinators.forEach(coordinator => {
+                if (coordinator.faculty == contributorFaculty) {
+                    emailList.push(coordinator.email);
+                }
+            });
+            serviceLocator.mailer.sendMail(emailList, `A student in your faculty has uploaded new file(s) into the contribution ${contribution.title}. Check it!`, 'New contribution in your faculty');
+        }
+
         res.status(200).send({
             exitcode: 0,
             files: serviceLocator.fileSerializer.serialize(uploadedFiles),

@@ -3,7 +3,7 @@
 const Magazine = require('../../domain/models/Magazine');
 
 module.exports = {
-    async CreateMagazine(name, manager_id, published_year, closureDate, finalClosureDate, coordinators, {accountRepository, magazineRepository}) {
+    async CreateMagazine(name, manager_id, published_year, closureDate, finalClosureDate, {accountRepository, magazineRepository}) {
         //#region Pre-condition
             
             //Check if the manager exists
@@ -11,20 +11,10 @@ module.exports = {
             if (!manager || !manager.id) {
                 throw new Error("ERR_MANAGER_NOT_EXISTING");
             }
-
-            //Check if all coordinators exist
-            const coordinatorList = [];
-            if (coordinators && coordinators.length > 0){
-                coordinatorsList = await accountRepository.getManyByIds(coordinators);
-                if (!coordinatorsList || coordinatorsList.length != coordinators.length) {
-                    throw new Error("ERR_COORDINATORS_INVALID");
-                }
-            }
-
         //#endregion
 
         //#region Flow
-            const magazine = new Magazine(null, manager, name, closureDate, finalClosureDate, coordinatorList, published_year)
+            const magazine = new Magazine(null, manager, name, closureDate, finalClosureDate, published_year)
             return magazineRepository.persist(magazine);
         //#endregion
     },   
@@ -41,7 +31,7 @@ module.exports = {
         return magazineRepository.find();
     },
 
-    async UpdateMagazine(magazineId, name, manager_id, published_year, closureDate, finalClosureDate, coordinators, {accountRepository, magazineRepository}) {
+    async UpdateMagazine(magazineId, name, manager_id, published_year, closureDate, finalClosureDate, {accountRepository, magazineRepository}) {
         try {       
             //#region Pre-condition
                 //Check if the magazine exists
@@ -56,19 +46,10 @@ module.exports = {
                     throw new Error("ERR_MANAGER_NOT_EXISTING");
                 }
 
-                //Check if all coordinators exist
-                const coordinatorList = [];
-                if (coordinators && coordinators.length > 0){
-                    coordinatorsList = await accountRepository.getManyByIds(coordinators);
-                    if (!coordinatorsList || coordinatorsList.length != coordinators.length) {
-                        throw new Error("ERR_COORDINATORS_INVALID");
-                    }
-                }
-
             //#endregion
 
             //#region Flow
-                const newMagazine = new Magazine(null, manager, name, closureDate, finalClosureDate, coordinatorList, published_year)
+                const newMagazine = new Magazine(null, manager, name, closureDate, finalClosureDate, published_year)
                 oldMagazine.merge(newMagazine);
                 console.log(oldMagazine);
                 return magazineRepository.merge(oldMagazine);

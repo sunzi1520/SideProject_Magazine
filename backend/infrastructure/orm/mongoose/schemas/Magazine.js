@@ -8,7 +8,6 @@ const magazineSchema = new Schema(
     published_year: Number,
     closureDate: Date,
     finalClosureDate: Date,
-    coordinators: [ {type: Schema.Types.ObjectId, ref: "Account"} ]
   },
   {
     timestamps: true
